@@ -1,100 +1,77 @@
 import torch
 from huggingface_hub import PyTorchModelHubMixin
+from transformers import BertModel, BertTokenizer
 
-from routellm.routers.similarity_weighted.utils import OPENAI_CLIENT
-
+# Simplified MODEL_IDS with only Llama 3 series models
 MODEL_IDS = {
-    "RWKV-4-Raven-14B": 0,
-    "alpaca-13b": 1,
-    "chatglm-6b": 2,
-    "chatglm2-6b": 3,
-    "chatglm3-6b": 4,
-    "claude-1": 5,
-    "claude-2.0": 6,
-    "claude-2.1": 7,
-    "claude-instant-1": 8,
-    "codellama-34b-instruct": 9,
-    "deepseek-llm-67b-chat": 10,
-    "dolly-v2-12b": 11,
-    "dolphin-2.2.1-mistral-7b": 12,
-    "falcon-180b-chat": 13,
-    "fastchat-t5-3b": 14,
-    "gemini-pro": 15,
-    "gemini-pro-dev-api": 16,
-    "gpt-3.5-turbo-0125": 17,
-    "gpt-3.5-turbo-0314": 18,
-    "gpt-3.5-turbo-0613": 19,
-    "gpt-3.5-turbo-1106": 20,
-    "gpt-4-0125-preview": 21,
-    "gpt-4-0314": 22,
-    "gpt-4-0613": 23,
-    "gpt-4-1106-preview": 24,
-    "gpt4all-13b-snoozy": 25,
-    "guanaco-33b": 26,
-    "koala-13b": 27,
-    "llama-13b": 28,
-    "llama-2-13b-chat": 29,
-    "llama-2-70b-chat": 30,
-    "llama-2-7b-chat": 31,
-    "llama2-70b-steerlm-chat": 32,
-    "mistral-7b-instruct": 33,
-    "mistral-7b-instruct-v0.2": 34,
-    "mistral-medium": 35,
-    "mixtral-8x7b-instruct-v0.1": 36,
-    "mpt-30b-chat": 37,
-    "mpt-7b-chat": 38,
-    "nous-hermes-2-mixtral-8x7b-dpo": 39,
-    "oasst-pythia-12b": 40,
-    "openchat-3.5": 41,
-    "openchat-3.5-0106": 42,
-    "openhermes-2.5-mistral-7b": 43,
-    "palm-2": 44,
-    "pplx-70b-online": 45,
-    "pplx-7b-online": 46,
-    "qwen-14b-chat": 47,
-    "qwen1.5-4b-chat": 48,
-    "qwen1.5-72b-chat": 49,
-    "qwen1.5-7b-chat": 50,
-    "solar-10.7b-instruct-v1.0": 51,
-    "stablelm-tuned-alpha-7b": 52,
-    "starling-lm-7b-alpha": 53,
-    "stripedhyena-nous-7b": 54,
-    "tulu-2-dpo-70b": 55,
-    "vicuna-13b": 56,
-    "vicuna-33b": 57,
-    "vicuna-7b": 58,
-    "wizardlm-13b": 59,
-    "wizardlm-70b": 60,
-    "yi-34b-chat": 61,
-    "zephyr-7b-alpha": 62,
-    "zephyr-7b-beta": 63,
+    "meta-llama/Llama-3.2-1B": 0,
+    "meta-llama/Llama-3.2-3B": 1,
+    "meta-llama/Llama-3.3-70B-Instruct": 2,
 }
 
+class BertEmbeddingModel:
+    """
+    Uses a BERT model from Hugging Face transformers to compute sentence embeddings
+    via average pooling over token embeddings.
+    """
+    def __init__(self, model_name="bert-base-uncased", device="cpu"):
+        self.tokenizer = BertTokenizer.from_pretrained(model_name)
+        self.model = BertModel.from_pretrained(model_name)
+        self.device = device
+        self.model.to(device)
+        self.model.eval()  # Set to evaluation mode
+
+    def encode(self, text, convert_to_tensor=True):
+        # Wrap a single string in a list
+        if isinstance(text, str):
+            text = [text]
+        inputs = self.tokenizer(text, return_tensors="pt", truncation=True, padding=True)
+        inputs = {k: v.to(self.device) for k, v in inputs.items()}
+        with torch.no_grad():
+            outputs = self.model(**inputs)
+        # Obtain the last hidden state: (batch_size, sequence_length, hidden_size)
+        last_hidden_state = outputs.last_hidden_state
+        attention_mask = inputs["attention_mask"]
+        # Compute weighted average using the attention mask
+        input_mask_expanded = attention_mask.unsqueeze(-1).expand(last_hidden_state.size()).float()
+        sum_embeddings = torch.sum(last_hidden_state * input_mask_expanded, dim=1)
+        sum_mask = torch.clamp(input_mask_expanded.sum(dim=1), min=1e-9)
+        embeddings = sum_embeddings / sum_mask
+        return embeddings if convert_to_tensor else embeddings.cpu().numpy()
 
 class MFModel(torch.nn.Module, PyTorchModelHubMixin):
-    def __init__(
-        self,
-        dim,
-        num_models,
-        text_dim,
-        num_classes,
-        use_proj,
-    ):
+    def __init__(self, dim, num_models, text_dim, num_classes, use_proj, device="cpu"):
+        """
+        Args:
+            dim: output dimension for each model's embedding (e.g., 128)
+            num_models: total number of models
+            text_dim: expected dimension of text embedding as used during training (e.g. 1536)
+            num_classes: number of classes (typically 1 for win rate regression)
+            use_proj: whether to apply an additional projection layer
+            device: device to run the model on
+        """
         super().__init__()
         self._name = "TextMF"
         self.use_proj = use_proj
         self.P = torch.nn.Embedding(num_models, dim)
+        self.device = device
 
-        self.embedding_model = "text-embedding-3-small"
+        # Use our BERT-based embedding model (returns 768-dim vectors)
+        self.bert_model = BertEmbeddingModel(model_name="bert-base-uncased", device=self.device)
+
+        # If the checkpoint expects a different text_dim than 768, add an upsampling layer.
+        if text_dim != 768:
+            self.up_proj = torch.nn.Linear(768, text_dim, bias=False)
+        else:
+            self.up_proj = None
 
         if self.use_proj:
             self.text_proj = torch.nn.Sequential(
                 torch.nn.Linear(text_dim, dim, bias=False)
             )
         else:
-            assert (
-                text_dim == dim
-            ), f"text_dim {text_dim} must be equal to dim {dim} if not using projection"
+            # Without projection, the text_dim must equal the model embedding dimension.
+            assert text_dim == dim, f"text_dim {text_dim} must be equal to dim {dim} if not using projection"
 
         self.classifier = torch.nn.Sequential(
             torch.nn.Linear(dim, num_classes, bias=False)
@@ -104,18 +81,21 @@ class MFModel(torch.nn.Module, PyTorchModelHubMixin):
         return self.P.weight.device
 
     def forward(self, model_id, prompt):
+        # Process model_id
         model_id = torch.tensor(model_id, dtype=torch.long).to(self.get_device())
-
         model_embed = self.P(model_id)
         model_embed = torch.nn.functional.normalize(model_embed, p=2, dim=1)
 
-        prompt_embed = (
-            OPENAI_CLIENT.embeddings.create(input=[prompt], model=self.embedding_model)
-            .data[0]
-            .embedding
-        )
-        prompt_embed = torch.tensor(prompt_embed, device=self.get_device())
-        prompt_embed = self.text_proj(prompt_embed)
+        # Obtain prompt embedding from BERT
+        prompt_embed = self.bert_model.encode(prompt, convert_to_tensor=True)
+        prompt_embed = prompt_embed.to(self.get_device())
+
+        # Upsample if needed (e.g., 768 -> 1536)
+        if self.up_proj is not None:
+            prompt_embed = self.up_proj(prompt_embed)
+
+        if self.use_proj:
+            prompt_embed = self.text_proj(prompt_embed)
 
         return self.classifier(model_embed * prompt_embed).squeeze()
 
