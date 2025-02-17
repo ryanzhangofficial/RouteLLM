@@ -4,7 +4,7 @@ from routellm.controller import Controller
 import litellm
 litellm._turn_on_debug()
 
-# os.environ["OPENAI_API_KEY"] = "sk-mhwFzxnx33jc0ke6MNu9eZNdNtG_hVr4_P7nqoFr0KT3BlbkFJFbbM3l7MYebIcrL6QHuqbgoMlTgjtV7WE7PkpkZQoA"
+# OPENAI_key = os.environ["OPENAI_API_KEY"]
 api_key = os.environ["HUGGINGFACEHUB_API_TOKEN"]
 
 client = Controller(
