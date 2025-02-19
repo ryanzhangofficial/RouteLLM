@@ -4,8 +4,8 @@ from transformers import BertModel, BertTokenizer
 
 # Simplified MODEL_IDS with only Llama 3 series models
 MODEL_IDS = {
-    "meta-llama/Llama-3.2-1B": 0,
-    "meta-llama/Llama-3.2-3B": 1,
+    "meta-llama/Llama-3.2-1B-Instruct": 0,
+    "meta-llama/Llama-3.1-8B-Instruct": 1,  # "meta-llama/Llama3.2-8B"
     "meta-llama/Llama-3.3-70B-Instruct": 2,
 }
 
@@ -107,3 +107,4 @@ class MFModel(torch.nn.Module, PyTorchModelHubMixin):
 
     def load(self, path):
         self.load_state_dict(torch.load(path))
+

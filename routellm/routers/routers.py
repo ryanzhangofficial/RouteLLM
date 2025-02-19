@@ -23,17 +23,16 @@ from routellm.routers.similarity_weighted.utils import (
     preprocess_battles,
 )
 
-
 def no_parallel(cls):
     cls.NO_PARALLEL = True
     return cls
-
 
 class Router(abc.ABC):
     NO_PARALLEL = False
 
     # Returns a float between 0 and 1 representing the routing decision (winrate of the strong model).
-    # If this value is >= the user-defined cutoff, the router will route to the strong model; otherwise, to the weak model.
+    # If this value is >= the user-defined cutoff, the router will route to the strong model;
+    # otherwise, to the weak model.
     @abc.abstractmethod
     def calculate_strong_win_rate(self, prompt):
         pass
@@ -46,7 +45,6 @@ class Router(abc.ABC):
 
     def __str__(self):
         return NAME_TO_CLS[self.__class__]
-
 
 @no_parallel
 class CausalLLMRouter(Router):
@@ -93,7 +91,6 @@ class CausalLLMRouter(Router):
         else:
             return 1 - output["binary_prob"]
 
-
 @no_parallel
 class BERTRouter(Router):
     def __init__(self, checkpoint_path, num_labels=3):
@@ -110,7 +107,6 @@ class BERTRouter(Router):
         # Compute probability of labels corresponding to tie or tier-2 wins
         binary_prob = np.sum(softmax_scores[-2:])
         return 1 - binary_prob
-
 
 @no_parallel
 class SWRankingRouter(Router):
@@ -167,14 +163,13 @@ class SWRankingRouter(Router):
         strong_winrate = 1 - weak_winrate
         return strong_winrate
 
-
 @no_parallel
 class MatrixFactorizationRouter(Router):
     def __init__(self,
                  checkpoint_path,
                  # Model pair for scoring at inference time (can differ from routing pair)
-                 strong_model="meta-llama/Llama-3.2-3B",
-                 weak_model="meta-llama/Llama-3.2-1B",
+                 strong_model="meta-llama/Llama-3.3-70B-Instruct",
+                 weak_model="meta-llama/Llama-3.2-1B-Instruct",
                  hidden_size=128,
                  num_models=64,
                  text_dim=1536,
@@ -197,13 +192,11 @@ class MatrixFactorizationRouter(Router):
         winrate = self.model.pred_win_rate(self.strong_model_id, self.weak_model_id, prompt)
         return winrate
 
-
 @no_parallel
 class RandomRouter(Router):
     def calculate_strong_win_rate(self, prompt):
         del prompt
         return random.uniform(0, 1)
-
 
 # Dictionary mapping router type names to their classes
 ROUTER_CLS = {

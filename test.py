@@ -1,16 +1,13 @@
 import os
 from routellm.controller import Controller
 
-import litellm
-litellm._turn_on_debug()
-
 # OPENAI_key = os.environ["OPENAI_API_KEY"]
 api_key = os.environ["HUGGINGFACEHUB_API_TOKEN"]
 
 client = Controller(
     routers=["mf"],  # Use the Meta-Filtering router for routing decisions
-    strong_model="huggingface/meta-llama/Llama-3.2-3B",  # Strong model (8B)
-    weak_model="huggingface/meta-llama/Llama-3.2-1B",  # Weak model (1B),
+    strong_model="meta-llama/Llama-3.3-70B-Instruct",  # Strong model (70B)
+    weak_model="meta-llama/Llama-3.2-1B-Instruct",  # Weak model (1B),
 #     api_base="https://api-inference.huggingface.co/models",
     api_key=api_key,
     progress_bar=True,
@@ -26,3 +23,5 @@ response = client.chat.completions.create(
     {"role": "user", "content": "Hello!"}
   ]
 )
+
+print(response)
