@@ -168,7 +168,7 @@ class MatrixFactorizationRouter(Router):
     def __init__(self,
                  checkpoint_path,
                  # Model pair for scoring at inference time (can differ from routing pair)
-                 strong_model="meta-llama/Llama-3.3-70B-Instruct",
+                 strong_model="meta-llama/Llama-3.1-8B-Instruct",
                  weak_model="meta-llama/Llama-3.2-1B-Instruct",
                  hidden_size=128,
                  num_models=64,

@@ -153,6 +153,8 @@ class Controller:
         routed_model = self._get_routed_model_for_completion(
             kwargs["messages"], router, threshold
         )
+        
+        print(f"Routed Model: {routed_model}")
 
         prompt = self._build_prompt(kwargs["messages"])
 
@@ -166,7 +168,7 @@ class Controller:
         )
         # Generate a completion using vLLM
         result = llm.generate(prompt, sampling_params)
-        return result
+        return result, routed_model
 
     # Matches OpenAI's Async Chat Completions interface, but now using vLLM.
     # Since vLLM may not have native async support,
@@ -194,4 +196,4 @@ class Controller:
         )
         # Wrap synchronous generation in asyncio.to_thread for async support.
         result = await asyncio.to_thread(llm.generate, prompt, sampling_params)
-        return result
+        return result, routed_model
