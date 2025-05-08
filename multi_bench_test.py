@@ -22,9 +22,9 @@ api_key = os.environ.get("HUGGINGFACEHUB_API_TOKEN", "")
 # ── Benchmarks ────────────────────────────────────────────────────────────
 #   • MMLU block is commented out (kept intact below).
 BENCHMARKS = {
-    # "MMLU": f"{parent_folder}/evals/mmlu/responses/",  # dir with many CSVs
-    "MT_Bench": f"{parent_folder}/evals/mt_bench/question.jsonl",
-    "GSM8K":    f"{parent_folder}/evals/gsm8k/gsm8k_responses.csv",
+    # "MMLU": f"{parent_folder}/routellm/evals/mmlu/responses/",  # dir with many CSVs
+    "MT_Bench": f"{parent_folder}/routellm/evals/mt_bench/question.jsonl",
+    "GSM8K":    f"{parent_folder}/routellm/evals/gsm8k/gsm8k_responses.csv",
 }
 
 # ── Routers to sweep ─────────────────────────────────────────────────────
