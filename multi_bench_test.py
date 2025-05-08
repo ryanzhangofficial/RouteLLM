@@ -6,6 +6,11 @@ import wandb
 
 from routellm.controller import Controller
 
+from pathlib import Path
+
+# Get the directory containing the current script
+parent_folder = Path(__file__).parent.absolute()
+
 pd.set_option("display.max_columns", None)
 pd.set_option("display.width", None)
 
@@ -17,9 +22,9 @@ api_key = os.environ.get("HUGGINGFACEHUB_API_TOKEN", "")
 # ── Benchmarks ────────────────────────────────────────────────────────────
 #   • MMLU block is commented out (kept intact below).
 BENCHMARKS = {
-    # "MMLU": "routellm/evals/mmlu/responses/",  # dir with many CSVs
-    "MT_Bench": "routellm/evals/mt_bench/question.jsonl",
-    "GSM8K":    "routellm/evals/gsm8k/gsm8k_responses.csv",
+    # "MMLU": f"{parent_folder}/evals/mmlu/responses/",  # dir with many CSVs
+    "MT_Bench": f"{parent_folder}/evals/mt_bench/question.jsonl",
+    "GSM8K":    f"{parent_folder}/evals/gsm8k/gsm8k_responses.csv",
 }
 
 # ── Routers to sweep ─────────────────────────────────────────────────────
@@ -223,5 +228,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-

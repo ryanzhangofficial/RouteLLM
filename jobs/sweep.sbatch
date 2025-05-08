@@ -11,20 +11,20 @@
 # TODO: @Ryan - Optimally, you specify all paths in absolute format. By that you make sure these don't break.
 # TODO: @Ryan - For the container mounts: Only mount them. Don't reassign the paths (see below how I did it).
 
-cd "$(dirname "$0")"
-
 nvidia-smi
 enroot create /dss/dssfs04/lwp-dss-0002/pn72yi/pn72yi-dss-0000/ge56heh2/messplus.sqsh
 
 # Train
 enroot start \
     --root \
-    -e HF_TOKEN_PATH=/dss/dsshome1/09/ge56heh2/.cache/huggingface/token \
+    -e HF_TOKEN_PATH=/dss/dsshome1/06/go76xom2/.cache/huggingface/token \
     -e HF_HOME=/dss/dssfs04/lwp-dss-0002/pn72yi/pn72yi-dss-0000/go76xom2/.cache/hf/misc \
     -e HF_DATASETS_CACHE=/dss/dssfs04/lwp-dss-0002/pn72yi/pn72yi-dss-0000/go76xom2/.cache/datasets \
     -e HF_DATASETS_TRUST_REMOTE_CODE=True \
+    -e WANDB_API_KEY=/dss/dsshome1/06/go76xom2/.cache/wandb/token \
+    -e OPENAI_API_KEY=/dss/dsshome1/06/go76xom2/.cache/openai/token \
     -e VLLM_USE_V1=0 \
-    --mount /dss/dssfs04/lwp-dss-0002/pn72yi/pn72yi-dss-0000/go76xom2/ \
+    --mount /dss/dssfs04/lwp-dss-0002/pn72yi/pn72yi-dss-0000/ \
     --mount /sbin \
     --mount /usr/share/ \
     messplus \
