@@ -17,7 +17,11 @@ pd.set_option("display.width", None)
 ##############################################################################
 # 1) GLOBALS
 ##############################################################################
-api_key = os.environ.get("HF_TOKEN_PATH", "")
+api_key_path = os.environ.get("HF_TOKEN_PATH", "")
+with open(api_key_path, "r") as f:
+    api_key = f.read()
+
+f.close()
 print("API KEY: " + api_key)
 
 # ── Benchmarks ────────────────────────────────────────────────────────────
