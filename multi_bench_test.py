@@ -17,7 +17,7 @@ pd.set_option("display.width", None)
 ##############################################################################
 # 1) GLOBALS
 ##############################################################################
-api_key = os.environ.get("HUGGINGFACEHUB_API_TOKEN", "")
+api_key = os.environ.get("HF_TOKEN_PATH", "")
 
 # ── Benchmarks ────────────────────────────────────────────────────────────
 #   • MMLU block is commented out (kept intact below).
