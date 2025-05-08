@@ -24,6 +24,7 @@ enroot start \
     -e OPENAI_API_KEY=/dss/dsshome1/06/go76xom2/.cache/openai/token \
     -e VLLM_USE_V1=0 \
     --mount /dss/dssfs04/lwp-dss-0002/pn72yi/pn72yi-dss-0000/ \
+    --mount /dss/dsshome1/06/go76xom2/ \
     --mount /sbin \
     --mount /usr/share/ \
     messplus \
