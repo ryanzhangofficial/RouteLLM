@@ -18,6 +18,7 @@ pd.set_option("display.width", None)
 # 1) GLOBALS
 ##############################################################################
 api_key = os.environ.get("HF_TOKEN_PATH", "")
+print("API KEY: " + api_key)
 
 # ── Benchmarks ────────────────────────────────────────────────────────────
 #   • MMLU block is commented out (kept intact below).
