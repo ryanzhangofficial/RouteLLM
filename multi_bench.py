@@ -1,5 +1,6 @@
 import os
 import re
+import time
 from pathlib import Path
 
 import pandas as pd
@@ -18,53 +19,18 @@ results_root.mkdir(exist_ok=True)
 
 # Define benchmarks and how to load them via 🤗 datasets
 DATASET_CONFIGS = {
-    "boolq": {
-        "path": "boolq", "split": "validation",
-        "question": "question", "label": "answer"
-    },
-    "arc_easy": {
-        "path": "ai2_arc", "config": "ARC-Easy", "split": "test",
-        "question": "question", "label": "answerKey"
-    },
-    "arc_challenge": {
-        "path": "ai2_arc", "config": "ARC-Challenge", "split": "test",
-        "question": "question", "label": "answerKey"
-    },
-    "gsm8k": {
-        "path": "gsm8k", "split": "test",
-        "question": "question", "label": "answer"
-    },
-    "sciq": {
-        "path": "scitail", "split": "test",
-        "question": "premise", "label": "hypothesis_label"
-    },
-    "piqa": {
-        "path": "piqa", "split": "test",
-        "question": "goal", "label": "answer"
-    },
-    "logiqa": {
-        "path": "logiqa", "split": "validation",
-        "question": "question_statement", "label": "answer"
-    },
-    "logiqa2": {
-        "path": "logiqa2", "split": "validation",
-        "question": "question_statement", "label": "answer"
-    },
-    "social_iqa": {
-        "path": "social_iqa", "split": "validation",
-        "question": "question", "label": "answer"
-    },
-    "winogrande": {
-        "path": "winogrande", "config": "winogrande_xl", "split": "validation",
-        "question": "sentence", "label": "answer"
-    },
-    # Lambada is generative; included for completeness but requires custom handling
-    "lambada_standard": {
-        "path": "lambada", "config": "standard", "split": "validation",
-        "question": "text", "label": "continuation"
-    },
+    "boolq": {"path": "boolq", "split": "validation", "question": "question", "label": "answer"},
+    "arc_easy": {"path": "ai2_arc", "config": "ARC-Easy", "split": "test", "question": "question", "label": "answerKey"},
+    "arc_challenge": {"path": "ai2_arc", "config": "ARC-Challenge", "split": "test", "question": "question", "label": "answerKey"},
+    "gsm8k": {"path": "gsm8k", "split": "test", "question": "question", "label": "answer"},
+    "sciq": {"path": "scitail", "split": "test", "question": "premise", "label": "hypothesis_label"},
+    "piqa": {"path": "piqa", "split": "test", "question": "goal", "label": "answer"},
+    "logiqa": {"path": "logiqa", "split": "validation", "question": "question_statement", "label": "answer"},
+    "logiqa2": {"path": "logiqa2", "split": "validation", "question": "question_statement", "label": "answer"},
+    "social_iqa": {"path": "social_iqa", "split": "validation", "question": "question", "label": "answer"},
+    "winogrande": {"path": "winogrande", "config": "winogrande_xl", "split": "validation", "question": "sentence", "label": "answer"},
+    "lambada_standard": {"path": "lambada", "config": "standard", "split": "validation", "question": "text", "label": "continuation"},
 }
-
 BENCHMARKS = list(DATASET_CONFIGS.keys())
 ROUTER     = "bert"
 THRESHOLDS = [0.05, 0.20, 0.45, 0.70]
@@ -76,27 +42,22 @@ api_key      = Path(api_key_path).read_text().strip() if api_key_path else ""
 pd.set_option("display.max_columns", None)
 pd.set_option("display.width", None)
 
+
 # ──────────────────────────────────────────────────────────────────────────
 # Dataset loader
 # ──────────────────────────────────────────────────────────────────────────
 
 def load_task_dataframe(task_name: str) -> pd.DataFrame:
     cfg = DATASET_CONFIGS.get(task_name)
-    if cfg is None:
-        raise ValueError(f"Unknown benchmark: {task_name}")
-    path   = cfg["path"]
-    split  = cfg["split"]
-    config = cfg.get("config", None)
+    path, split, config = cfg["path"], cfg["split"], cfg.get("config", None)
     ds = load_dataset(path, config, split=split)
-    q_key = cfg["question"]
-    l_key = cfg["label"]
-    questions = ds[q_key]
-    labels     = ds[l_key]
-    # For ARC tasks 'answerKey' is e.g. 'A','B','C','D'; map to index
+    q_key, l_key = cfg["question"], cfg["label"]
+    questions, labels = ds[q_key], ds[l_key]
     if task_name.startswith("arc_"):
         choice_map = {c: i for i, c in enumerate(ds["choices"]["label"])}
         labels = [choice_map[k] for k in labels]
     return pd.DataFrame({"question": questions, "label": labels})
+
 
 # ──────────────────────────────────────────────────────────────────────────
 # Inference helper
@@ -107,16 +68,16 @@ def get_completion(row, client, thr):
     messages = [{"role": "user", "content": prompt}]
     model_id = f"router-{ROUTER}-{thr}"
     responses, routed_model = client.chat.completions.create(
-        model=model_id,
-        messages=messages,
+        model=model_id, messages=messages
     )
     raw = responses[0].outputs[0].text.strip().lower()
     m   = re.search(r"\b(true|false)\b", raw)
     pred = (m.group(0) == "true") if m else None
     return pred, raw, routed_model
 
+
 # ──────────────────────────────────────────────────────────────────────────
-# Main sweep with Zeus energy monitor
+# Main sweep with per-sample Zeus logging
 # ──────────────────────────────────────────────────────────────────────────
 
 def main():
@@ -142,35 +103,57 @@ def main():
                 reinit=True,
             )
 
-            # Initialize Zeus monitor
+            # Zeus monitor
             monitor = ZeusMonitor(gpu_indices=[0], approx_instant_energy=True)
-            monitor.begin_window(f"{task_name}-thr-{thr}")
 
-            # Inference
-            df = df_base.copy()
-            df[["predicted", "raw", "model"]] = df.apply(
-                lambda r: pd.Series(get_completion(r, client, thr)), axis=1
-            )
+            # Prepare storage
+            records = []
 
-            # End Zeus window and sum energy
-            measurement = monitor.end_window(f"{task_name}-thr-{thr}")
-            energy_j = sum(measurement.gpu_energy.values())
+            for idx, row in df_base.iterrows():
+                monitor.begin_window(f"sample-{idx}")
+                pred, raw, model = get_completion(row, client, thr)
+                meas = monitor.end_window(f"sample-{idx}")
+                energy = sum(meas.gpu_energy.values())
 
-            # Metrics
-            df["correct"] = df.predicted == df.label
+                correct = (pred == row['label'])
+                choice_int = 1 if "8B" in model else 0
+
+                # log per sample with explicit commit and console print
+                wandb.log({
+                    "sample_energy": energy,
+                    "sample_accuracy": int(correct),
+                    "sample_model_choice": choice_int,
+                }, step=idx, commit=True)
+                print(f"[Sample {idx}] energy={energy:.2f}J, correct={correct}, model={model}")
+
+                records.append({
+                    "question": row['question'],
+                    "label": row['label'],
+                    "predicted": pred,
+                    "raw": raw,
+                    "model": model,
+                    "energy": energy,
+                    "correct": correct,
+                    "choice_int": choice_int,
+                })
+
+            # Aggregate at threshold level
+            df = pd.DataFrame(records)
             acc = df.correct.mean()
-            df["choice_int"] = df.model.apply(lambda m: 1 if "8B" in m else 0)
+            total_energy = df.energy.sum()
             avg_choice = df.choice_int.mean()
 
-            # Log
-            run.log({"accuracy": acc, "energy_j": energy_j, "model_choice": avg_choice})
+            # summary log
+            wandb.log({"accuracy": acc, "energy_j": total_energy, "model_choice": avg_choice})
 
-            # Save CSV
+            # Save per-threshold CSV
             out_dir = results_root / task_name
             out_dir.mkdir(exist_ok=True)
             df.to_csv(out_dir / f"{task_name}_{thr:.2f}.csv", index=False)
 
-            print(f"{task_name} thr={thr:.2f} acc={acc:.3%} energy={energy_j:.1f}J choice={avg_choice:.2f}")
+            print(
+                f"{task_name} thr={thr:.2f} acc={acc:.3%} energy={total_energy:.1f}J choice={avg_choice:.2f}"
+            )
             run.finish()
 
 if __name__ == "__main__":
