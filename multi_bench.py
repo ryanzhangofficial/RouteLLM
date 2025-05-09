@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pandas as pd
 import wandb
-from lm_eval.tasks import TASK_REGISTRY
+from datasets import load_dataset
 from zeus.monitor import ZeusMonitor
 
 from routellm.controller import Controller
@@ -16,20 +16,32 @@ parent_folder = Path(__file__).parent.resolve()
 results_root  = parent_folder / "sweep_results"
 results_root.mkdir(exist_ok=True)
 
-# Define benchmarks by task names (no YAML)
-BENCHMARKS = [
-    "arc_challenge",
-    "arc_easy",
-    "boolq",
-    "lambada_standard",
-    "logiqa",
-    "logiqa2",
-    "piqa",
-    "sciq",
-    "social_iqa",
-    "winogrande",
-]
+# Define benchmarks and how to load them via 🤗 datasets
+DATASET_CONFIGS = {
+    "boolq": {
+        "path": "boolq", "split": "validation",
+        "question": "question", "label": "answer"
+    },
+    "arc_easy": {
+        "path": "ai2_arc", "config": "ARC-Easy", "split": "test",
+        "question": "question", "label": "answerKey"
+    },
+    "arc_challenge": {
+        "path": "ai2_arc", "config": "ARC-Challenge", "split": "test",
+        "question": "question", "label": "answerKey"
+    },
+    "gsm8k": {
+        "path": "gsm8k", "split": "test",
+        "question": "question", "label": "answer"
+    },
+    "sciq": {
+        "path": "scitail", "split": "test",
+        "question": "premise", "label": "hypothesis_label"
+    },
+    # add more datasets as needed
+}
 
+BENCHMARKS = list(DATASET_CONFIGS.keys())
 ROUTER     = "bert"
 THRESHOLDS = [0.05, 0.20, 0.45, 0.70]
 
@@ -41,20 +53,25 @@ pd.set_option("display.max_columns", None)
 pd.set_option("display.width", None)
 
 # ──────────────────────────────────────────────────────────────────────────
-# Task loader using lm-eval
+# Dataset loader
 # ──────────────────────────────────────────────────────────────────────────
 
 def load_task_dataframe(task_name: str) -> pd.DataFrame:
-    """Return a DataFrame of (question, label) from lm-eval's Task API."""
-    task_cls = TASK_REGISTRY.get(task_name)
-    if task_cls is None:
-        raise ValueError(f"Unknown task: {task_name}")
-    task = task_cls()
-    docs = task.test_docs() if hasattr(task, "test_docs") else task.validation_docs()
-    questions, labels = [], []
-    for d in docs:
-        questions.append(task.doc_to_text(d))
-        labels.append(task.doc_to_target(d))
+    cfg = DATASET_CONFIGS.get(task_name)
+    if cfg is None:
+        raise ValueError(f"Unknown benchmark: {task_name}")
+    path   = cfg["path"]
+    split  = cfg["split"]
+    config = cfg.get("config", None)
+    ds = load_dataset(path, config, split=split)
+    q_key = cfg["question"]
+    l_key = cfg["label"]
+    questions = ds[q_key]
+    labels     = ds[l_key]
+    # For ARC tasks 'answerKey' is e.g. 'A','B','C','D'; map to index
+    if task_name.startswith("arc_"):
+        choice_map = {c: i for i, c in enumerate(ds["choices"]["label"])}
+        labels = [choice_map[k] for k in labels]
     return pd.DataFrame({"question": questions, "label": labels})
 
 # ──────────────────────────────────────────────────────────────────────────
@@ -80,7 +97,6 @@ def get_completion(row, client, thr):
 
 def main():
     wandb.login()
-
     client = Controller(
         routers=[ROUTER],
         strong_model="meta-llama/Llama-3.1-8B-Instruct",
@@ -102,34 +118,30 @@ def main():
                 reinit=True,
             )
 
-            # Initialize Zeus monitor for all GPUs
-            monitor = ZeusMonitor(gpu_indices=list(range(os.cpu_count())), approx_instant_energy=True)
+            # Initialize Zeus monitor
+            monitor = ZeusMonitor(gpu_indices=[0], approx_instant_energy=True)
             monitor.begin_window(f"{task_name}-thr-{thr}")
 
-            # Run inference
+            # Inference
             df = df_base.copy()
             df[["predicted", "raw", "model"]] = df.apply(
                 lambda r: pd.Series(get_completion(r, client, thr)), axis=1
             )
 
-            # End Zeus window and compute total energy
+            # End Zeus window and sum energy
             measurement = monitor.end_window(f"{task_name}-thr-{thr}")
             energy_j = sum(measurement.gpu_energy.values())
 
-            # Compute accuracy and model choice average
+            # Metrics
             df["correct"] = df.predicted == df.label
             acc = df.correct.mean()
             df["choice_int"] = df.model.apply(lambda m: 1 if "8B" in m else 0)
             avg_choice = df.choice_int.mean()
 
-            # Log to W&B
-            run.log({
-                "accuracy": acc,
-                "energy_j": energy_j,
-                "model_choice": avg_choice,
-            })
+            # Log
+            run.log({"accuracy": acc, "energy_j": energy_j, "model_choice": avg_choice})
 
-            # Save CSV per threshold
+            # Save CSV
             out_dir = results_root / task_name
             out_dir.mkdir(exist_ok=True)
             df.to_csv(out_dir / f"{task_name}_{thr:.2f}.csv", index=False)
