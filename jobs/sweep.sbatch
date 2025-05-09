@@ -2,6 +2,7 @@
 #SBATCH -p lrz-hgx-h100-94x4
 #SBATCH --gres=gpu:1
 #SBATCH --time=1-08:00:00
+#SBATCH --array=0-9 
 #SBATCH -o output_%A.out
 #SBATCH --exclude lrz-hgx-h100-025,lrz-hgx-h100-004,lrz-hgx-h100-030,lrz-hgx-h100-021
 
