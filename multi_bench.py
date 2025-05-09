@@ -20,18 +20,19 @@ results_root.mkdir(exist_ok=True)
 
 # Define benchmarks via the Hugging Face datasets library
 DATASET_CONFIGS = {
-    "boolq":           {"path":"boolq",        "split":"validation", "question":"question",           "label":"answer"},
-    "arc_easy":        {"path":"ai2_arc",      "config":"ARC-Easy",   "split":"test",       "question":"question",           "label":"answerKey"},
-    "arc_challenge":   {"path":"ai2_arc",      "config":"ARC-Challenge","split":"test",      "question":"question",           "label":"answerKey"},
-    "gsm8k":           {"path":"gsm8k",        "split":"test",         "question":"question",           "label":"answer"},
-    "sciq":            {"path":"scitail",      "split":"test",         "question":"premise",            "label":"hypothesis_label"},
-    "piqa":            {"path":"piqa",         "split":"test",         "question":"goal",               "label":"answer"},
-    "logiqa":          {"path":"logiqa",       "split":"validation",   "question":"question_statement", "label":"answer"},
-    "logiqa2":         {"path":"logiqa2",      "split":"validation",   "question":"question_statement", "label":"answer"},
-    "social_iqa":      {"path":"social_iqa",   "split":"validation",   "question":"question",           "label":"answer"},
-    "winogrande":      {"path":"winogrande",   "config":"winogrande_xl","split":"validation","question":"sentence",           "label":"answer"},
-    "lambada_standard":{"path":"lambada",     "config":"standard",     "split":"validation","question":"text",               "label":"continuation"},
+    "boolq":            {"path":"boolq",          "split":"validation", "question":"question",           "label":"answer"},
+    "arc_easy":         {"path":"ai2_arc",        "config":"ARC-Easy",     "split":"test",       "question":"question",           "label":"answerKey"},
+    "arc_challenge":    {"path":"ai2_arc",        "config":"ARC-Challenge","split":"test",       "question":"question",           "label":"answerKey"},
+    "gsm8k":            {"path":"gsm8k",          "config":"main",         "split":"test",       "question":"question",           "label":"answer"},
+    "sciq":             {"path":"scitail",        "config":"snli_format",  "split":"test",       "question":"premise",            "label":"hypothesis_label"},
+    "piqa":             {"path":"piqa",           "split":"test",         "question":"goal",               "label":"label"},
+    "logiqa":           {"path":"logiqa",         "split":"validation",   "question":"question_statement", "label":"answer"},
+    "logiqa2":          {"path":"logiqa2",        "split":"validation",   "question":"question_statement", "label":"answer"},
+    "social_iqa":       {"path":"social_i_qa",    "split":"validation",   "question":"question",           "label":"answer"},
+    "winogrande":       {"path":"winogrande",     "config":"winogrande_xl","split":"validation","question":"sentence",           "label":"answer"},
+    "lambada_standard": {"path":"lambada",        "config":"standard",    "split":"validation", "question":"text",               "label":"continuation"},
 }
+
 BENCHMARKS = list(DATASET_CONFIGS.keys())
 ROUTER     = "bert"
 THRESHOLDS = [0.05, 0.20, 0.45, 0.70]
