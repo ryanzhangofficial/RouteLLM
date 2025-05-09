@@ -38,7 +38,31 @@ DATASET_CONFIGS = {
         "path": "scitail", "split": "test",
         "question": "premise", "label": "hypothesis_label"
     },
-    # add more datasets as needed
+    "piqa": {
+        "path": "piqa", "split": "test",
+        "question": "goal", "label": "answer"
+    },
+    "logiqa": {
+        "path": "logiqa", "split": "validation",
+        "question": "question_statement", "label": "answer"
+    },
+    "logiqa2": {
+        "path": "logiqa2", "split": "validation",
+        "question": "question_statement", "label": "answer"
+    },
+    "social_iqa": {
+        "path": "social_iqa", "split": "validation",
+        "question": "question", "label": "answer"
+    },
+    "winogrande": {
+        "path": "winogrande", "config": "winogrande_xl", "split": "validation",
+        "question": "sentence", "label": "answer"
+    },
+    # Lambada is generative; included for completeness but requires custom handling
+    "lambada_standard": {
+        "path": "lambada", "config": "standard", "split": "validation",
+        "question": "text", "label": "continuation"
+    },
 }
 
 BENCHMARKS = list(DATASET_CONFIGS.keys())
