@@ -1,5 +1,6 @@
 import os
 import re
+import sys
 import time
 from pathlib import Path
 
@@ -17,25 +18,25 @@ parent_folder = Path(__file__).parent.resolve()
 results_root  = parent_folder / "sweep_results"
 results_root.mkdir(exist_ok=True)
 
-# Define benchmarks and how to load them via 🤗 datasets
+# Define benchmarks via the Hugging Face datasets library
 DATASET_CONFIGS = {
-    "boolq": {"path": "boolq", "split": "validation", "question": "question", "label": "answer"},
-    "arc_easy": {"path": "ai2_arc", "config": "ARC-Easy", "split": "test", "question": "question", "label": "answerKey"},
-    "arc_challenge": {"path": "ai2_arc", "config": "ARC-Challenge", "split": "test", "question": "question", "label": "answerKey"},
-    "gsm8k": {"path": "gsm8k", "split": "test", "question": "question", "label": "answer"},
-    "sciq": {"path": "scitail", "split": "test", "question": "premise", "label": "hypothesis_label"},
-    "piqa": {"path": "piqa", "split": "test", "question": "goal", "label": "answer"},
-    "logiqa": {"path": "logiqa", "split": "validation", "question": "question_statement", "label": "answer"},
-    "logiqa2": {"path": "logiqa2", "split": "validation", "question": "question_statement", "label": "answer"},
-    "social_iqa": {"path": "social_iqa", "split": "validation", "question": "question", "label": "answer"},
-    "winogrande": {"path": "winogrande", "config": "winogrande_xl", "split": "validation", "question": "sentence", "label": "answer"},
-    "lambada_standard": {"path": "lambada", "config": "standard", "split": "validation", "question": "text", "label": "continuation"},
+    "boolq":           {"path":"boolq",        "split":"validation", "question":"question",           "label":"answer"},
+    "arc_easy":        {"path":"ai2_arc",      "config":"ARC-Easy",   "split":"test",       "question":"question",           "label":"answerKey"},
+    "arc_challenge":   {"path":"ai2_arc",      "config":"ARC-Challenge","split":"test",      "question":"question",           "label":"answerKey"},
+    "gsm8k":           {"path":"gsm8k",        "split":"test",         "question":"question",           "label":"answer"},
+    "sciq":            {"path":"scitail",      "split":"test",         "question":"premise",            "label":"hypothesis_label"},
+    "piqa":            {"path":"piqa",         "split":"test",         "question":"goal",               "label":"answer"},
+    "logiqa":          {"path":"logiqa",       "split":"validation",   "question":"question_statement", "label":"answer"},
+    "logiqa2":         {"path":"logiqa2",      "split":"validation",   "question":"question_statement", "label":"answer"},
+    "social_iqa":      {"path":"social_iqa",   "split":"validation",   "question":"question",           "label":"answer"},
+    "winogrande":      {"path":"winogrande",   "config":"winogrande_xl","split":"validation","question":"sentence",           "label":"answer"},
+    "lambada_standard":{"path":"lambada",     "config":"standard",     "split":"validation","question":"text",               "label":"continuation"},
 }
 BENCHMARKS = list(DATASET_CONFIGS.keys())
 ROUTER     = "bert"
 THRESHOLDS = [0.05, 0.20, 0.45, 0.70]
 
-# Read HF API key from mounted file
+# Read your HF API key from the mounted file
 api_key_path = os.environ.get("HF_TOKEN_PATH", "")
 api_key      = Path(api_key_path).read_text().strip() if api_key_path else ""
 
@@ -46,9 +47,8 @@ pd.set_option("display.width", None)
 # ──────────────────────────────────────────────────────────────────────────
 # Dataset loader
 # ──────────────────────────────────────────────────────────────────────────
-
 def load_task_dataframe(task_name: str) -> pd.DataFrame:
-    cfg = DATASET_CONFIGS.get(task_name)
+    cfg = DATASET_CONFIGS[task_name]
     path, split, config = cfg["path"], cfg["split"], cfg.get("config", None)
     ds = load_dataset(path, config, split=split)
     q_key, l_key = cfg["question"], cfg["label"]
@@ -62,14 +62,11 @@ def load_task_dataframe(task_name: str) -> pd.DataFrame:
 # ──────────────────────────────────────────────────────────────────────────
 # Inference helper
 # ──────────────────────────────────────────────────────────────────────────
-
 def get_completion(row, client, thr):
     prompt = f"Question: {row['question']}\nRespond with ONLY 'true' or 'false':"
     messages = [{"role": "user", "content": prompt}]
     model_id = f"router-{ROUTER}-{thr}"
-    responses, routed_model = client.chat.completions.create(
-        model=model_id, messages=messages
-    )
+    responses, routed_model = client.chat.completions.create(model=model_id, messages=messages)
     raw = responses[0].outputs[0].text.strip().lower()
     m   = re.search(r"\b(true|false)\b", raw)
     pred = (m.group(0) == "true") if m else None
@@ -77,10 +74,10 @@ def get_completion(row, client, thr):
 
 
 # ──────────────────────────────────────────────────────────────────────────
-# Main sweep with per-sample Zeus logging
+# Main sweep for one benchmark (by index)
 # ──────────────────────────────────────────────────────────────────────────
-
-def main():
+def main(task_idx: int):
+    task_name = BENCHMARKS[task_idx]
     wandb.login()
     client = Controller(
         routers=[ROUTER],
@@ -90,71 +87,67 @@ def main():
         progress_bar=True,
     )
 
-    for task_name in BENCHMARKS:
-        df_base = load_task_dataframe(task_name)
-        print(f"Loaded {task_name}: {len(df_base)} samples")
+    # Load the chosen benchmark
+    df_base = load_task_dataframe(task_name)
+    print(f"Loaded {task_name}: {len(df_base)} samples")
 
-        for thr in THRESHOLDS:
-            run = wandb.init(
-                project="routellm-sweep",
-                entity="tum-i13",
-                name=f"{ROUTER}-{task_name}-thr-{thr:.2f}",
-                config={"benchmark": task_name, "router": ROUTER, "threshold": thr},
-                reinit=True,
-            )
+    # Sweep over thresholds
+    for thr in THRESHOLDS:
+        run = wandb.init(
+            project="routellm-sweep",
+            entity="tum-i13",
+            name=f"{ROUTER}-{task_name}-thr-{thr:.2f}",
+            config={"benchmark": task_name, "router": ROUTER, "threshold": thr},
+            reinit=True,
+        )
+        monitor = ZeusMonitor(gpu_indices=[0], approx_instant_energy=True)
+        records = []
 
-            # Zeus monitor
-            monitor = ZeusMonitor(gpu_indices=[0], approx_instant_energy=True)
+        for idx, row in df_base.iterrows():
+            monitor.begin_window(f"sample-{idx}")
+            pred, raw, model = get_completion(row, client, thr)
+            meas = monitor.end_window(f"sample-{idx}")
+            energy = sum(meas.gpu_energy.values())
 
-            # Prepare storage
-            records = []
+            correct = (pred == row["label"])
+            choice_int = 1 if "8B" in model else 0
 
-            for idx, row in df_base.iterrows():
-                monitor.begin_window(f"sample-{idx}")
-                pred, raw, model = get_completion(row, client, thr)
-                meas = monitor.end_window(f"sample-{idx}")
-                energy = sum(meas.gpu_energy.values())
+            # log per-sample immediately, with console print
+            wandb.log({
+                "sample_energy":       energy,
+                "sample_accuracy":     int(correct),
+                "sample_model_choice": choice_int,
+            }, step=idx, commit=True)
+            print(f"[{task_name} thr={thr:.2f} | sample {idx}] energy={energy:.2f}J, correct={correct}, model={model}")
 
-                correct = (pred == row['label'])
-                choice_int = 1 if "8B" in model else 0
+            records.append({
+                "question":     row["question"],
+                "label":        row["label"],
+                "predicted":    pred,
+                "raw":          raw,
+                "model":        model,
+                "energy":       energy,
+                "correct":      correct,
+                "choice_int":   choice_int,
+            })
 
-                # log per sample with explicit commit and console print
-                wandb.log({
-                    "sample_energy": energy,
-                    "sample_accuracy": int(correct),
-                    "sample_model_choice": choice_int,
-                }, step=idx, commit=True)
-                print(f"[Sample {idx}] energy={energy:.2f}J, correct={correct}, model={model}")
+        # summary at this threshold
+        df = pd.DataFrame(records)
+        acc = df.correct.mean()
+        total_energy = df.energy.sum()
+        avg_choice = df.choice_int.mean()
 
-                records.append({
-                    "question": row['question'],
-                    "label": row['label'],
-                    "predicted": pred,
-                    "raw": raw,
-                    "model": model,
-                    "energy": energy,
-                    "correct": correct,
-                    "choice_int": choice_int,
-                })
+        wandb.log({"accuracy": acc, "energy_j": total_energy, "model_choice": avg_choice})
+        out_dir = results_root / task_name
+        out_dir.mkdir(exist_ok=True)
+        df.to_csv(out_dir / f"{task_name}_{thr:.2f}.csv", index=False)
+        print(f"**DONE** {task_name} thr={thr:.2f} acc={acc:.3%} energy={total_energy:.1f}J choice={avg_choice:.2f}")
 
-            # Aggregate at threshold level
-            df = pd.DataFrame(records)
-            acc = df.correct.mean()
-            total_energy = df.energy.sum()
-            avg_choice = df.choice_int.mean()
+        run.finish()
 
-            # summary log
-            wandb.log({"accuracy": acc, "energy_j": total_energy, "model_choice": avg_choice})
-
-            # Save per-threshold CSV
-            out_dir = results_root / task_name
-            out_dir.mkdir(exist_ok=True)
-            df.to_csv(out_dir / f"{task_name}_{thr:.2f}.csv", index=False)
-
-            print(
-                f"{task_name} thr={thr:.2f} acc={acc:.3%} energy={total_energy:.1f}J choice={avg_choice:.2f}"
-            )
-            run.finish()
 
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) != 2:
+        print(f"Usage: python {sys.argv[0]} <benchmark_index 0..{len(BENCHMARKS)-1}>")
+        sys.exit(1)
+    main(int(sys.argv[1]))
