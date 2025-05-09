@@ -3,7 +3,7 @@
 #SBATCH --gres=gpu:1
 #SBATCH --time=1-08:00:00
 #SBATCH --array=0-9 
-#SBATCH -o output_%A.out
+#SBATCH -o output_%A_%a.out
 #SBATCH --exclude lrz-hgx-h100-025,lrz-hgx-h100-004,lrz-hgx-h100-030,lrz-hgx-h100-021
 
 # TODO: @Ryan - You need to swap the image (in line 13 of this script) for your own image with your project dependencies.
