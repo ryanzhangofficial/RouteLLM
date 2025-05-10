@@ -177,7 +177,14 @@ def main(task_idx: int):
 
 # ─────────────────────────────────────────────────────────
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print(f"Usage: python {sys.argv[0]} <benchmark_index 0..{len(BENCHMARKS)-1}>")
+    if len(sys.argv) not in (2, 3):
+        print(
+            f"Usage: python {sys.argv[0]} <benchmark_idx 0..{len(BENCHMARKS)-1}> "
+            "[optional: single_threshold]"
+        )
         sys.exit(1)
+
+    if len(sys.argv) == 3:               
+        THRESHOLDS = [float(sys.argv[2])]
+    
     main(int(sys.argv[1]))
