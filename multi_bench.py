@@ -51,7 +51,7 @@ def load_task_dataframe(task_name: str) -> pd.DataFrame:
     cfg = DATASET_CONFIGS[task_name]
     ds  = load_dataset(cfg["path"], cfg.get("config"), split=cfg["split"])
 
-    # combine context for LogiQA
+    # --- build question text ---------------------------------------------
     if task_name == "logiqa":
         questions = [
             f"{ctx.strip()}\n\n{q.strip()}"
@@ -60,13 +60,18 @@ def load_task_dataframe(task_name: str) -> pd.DataFrame:
     else:
         questions = ds[cfg["question"]]
 
-    labels = ds[cfg["label"]]
-
+    # --- canonicalise gold label -----------------------------------------
     if task_name.startswith("arc_"):
-        letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        labels  = [letters.index(ch) for ch in labels]
+        labels = [
+            row_choices["label"].index(ans_key)
+            for ans_key, row_choices in zip(ds[cfg["label"]], ds["choices"])
+        ]
+
     elif task_name == "social_iqa":
-        labels  = [ord(ch) - ord("A") for ch in labels]
+        labels = [ord(ch) - ord("A") for ch in ds[cfg["label"]]]
+
+    else:
+        labels = ds[cfg["label"]]
 
     return pd.DataFrame({"question": questions, "label": labels})
 
