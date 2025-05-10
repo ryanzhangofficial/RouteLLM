@@ -13,7 +13,11 @@
 # TODO: @Ryan - For the container mounts: Only mount them. Don't reassign the paths (see below how I did it).
 
 nvidia-smi
-enroot create -f /dss/dssfs04/lwp-dss-0002/pn72yi/pn72yi-dss-0000/ge56heh2/messplus.sqsh
+lock=/tmp/messplus.lock
+(
+  flock -n 200
+  enroot create -f --name messplus /dss/dssfs04/lwp-dss-0002/pn72yi/pn72yi-dss-0000/ge56heh2/messplus.sqsh
+) 200>"$lock"
 
 # Train
 enroot start \
