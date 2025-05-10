@@ -13,7 +13,7 @@
 # TODO: @Ryan - For the container mounts: Only mount them. Don't reassign the paths (see below how I did it).
 
 nvidia-smi
-enroot create /dss/dssfs04/lwp-dss-0002/pn72yi/pn72yi-dss-0000/ge56heh2/messplus.sqsh
+enroot create -f /dss/dssfs04/lwp-dss-0002/pn72yi/pn72yi-dss-0000/ge56heh2/messplus.sqsh
 
 # Train
 enroot start \
