@@ -2,7 +2,7 @@
 #SBATCH -p lrz-hgx-h100-94x4          # H100 partition
 #SBATCH --gres=gpu:1                  # one GPU per task
 #SBATCH --array=0-39                  # 40 (benchmark,threshold) pairs, no %-limit
-#SBATCH --time=4-00:00:00             # wall-clock upper bound 
+#SBATCH --time=2-00:00:00             # wall-clock upper bound 
 #SBATCH -o output_%A_%a.out
 #SBATCH --exclude=lrz-hgx-h100-025,lrz-hgx-h100-004,lrz-hgx-h100-030,lrz-hgx-h100-021
 
