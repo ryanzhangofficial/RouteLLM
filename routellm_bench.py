@@ -331,7 +331,7 @@ class MessPlusAutomaticModelSelector:
                         "strong_model", "meta-llama/Llama-3.1-70B-Instruct"
                     ),
                     weak_model=self.algorithm_config.get(
-                        "weak_model", "meta-llama/Llama-3.2-1B-Instruct"
+                        "weak_model",    "meta-llama/Llama-3.2-1B-Instruct"
                     ),
                     api_key=api_key,
                     progress_bar=True,
@@ -339,15 +339,15 @@ class MessPlusAutomaticModelSelector:
 
                 # 2) Load the DataFrame for this benchmark
                 df_base = task
+
                 monitor = ZeusMonitor(gpu_indices=[0], approx_instant_energy=True)
                 records = []
 
-                # 3) Single‐threshold loop over samples
+                # 3) Single-threshold loop, logging only document_id, model_choice, and energy
                 thr = self.algorithm_config["threshold"]
                 for idx, row in df_base.iterrows():
                     monitor.begin_window(f"sample-{idx}")
 
-                    # Build and send the prompt
                     prompt = f"Question: {row['question']}\nRespond with ONLY 'true' or 'false':"
                     messages = [{"role": "user", "content": prompt}]
                     model_id = f"router-{ROUTER}-{thr}"
@@ -355,50 +355,30 @@ class MessPlusAutomaticModelSelector:
                         model=model_id, messages=messages
                     )
 
-                    # Parse the answer
-                    raw = responses[0].outputs[0].text.strip().lower()
-                    m   = re.search(r"\b(true|false)\b", raw)
-                    pred = (m.group(0) == "true") if m else None
-
-                    # Measure energy & accuracy
-                    meas   = monitor.end_window(f"sample-{idx}")
+                    meas = monitor.end_window(f"sample-{idx}")
                     energy = sum(meas.gpu_energy.values())
-                    correct = (pred == row["label"])
                     choice_int = 1 if "8B" in routed_model else 0
 
                     wandb.log({
-                        "sample_energy":       energy,
-                        "sample_accuracy":     int(correct),
-                        "sample_model_choice": choice_int,
+                        "document_id":  idx,
+                        "model_choice": choice_int,
+                        "energy":       energy,
                     }, step=idx, commit=True)
 
                     records.append({
-                        "question":    row["question"],
-                        "label":       row["label"],
-                        "predicted":   pred,
-                        "raw":         raw,
-                        "model":       routed_model,
-                        "energy":      energy,
-                        "correct":     correct,
-                        "choice_int":  choice_int,
+                        "document_id":  idx,
+                        "model_choice": choice_int,
+                        "energy":       energy,
                     })
 
-                # 4) Summary logging & CSV dump
+                # 4) Write out CSV of results
                 df = pd.DataFrame(records)
-                acc = df.correct.mean()
-                total_energy = df.energy.sum()
-                avg_choice   = df.choice_int.mean()
-
-                wandb.log({
-                    "accuracy":     acc,
-                    "energy_j":     total_energy,
-                    "model_choice": avg_choice,
-                })
-
                 out_dir = results_root / task_output.task_name
                 out_dir.mkdir(exist_ok=True)
                 df.to_csv(out_dir / f"{task_output.task_name}_{thr:.2f}.csv", index=False)
+
                 run.finish()
+
 
         ### Postprocess outputs ###
         task.apply_filters()
