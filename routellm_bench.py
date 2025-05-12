@@ -351,7 +351,7 @@ class MessPlusAutomaticModelSelector:
                     prompt = f"Question: {row['question']}\nRespond with ONLY 'true' or 'false':"
                     messages = [{"role": "user", "content": prompt}]
                     model_id = f"router-{ROUTER}-{thr}"
-                    responses, routed_model = client.chat.completions.create(
+                    routed_model = client.chat.completions.create(
                         model=model_id, messages=messages
                     )
 
