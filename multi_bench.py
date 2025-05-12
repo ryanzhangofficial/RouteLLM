@@ -20,9 +20,9 @@ results_root.mkdir(exist_ok=True)
 
 # --- one-liner style dictionary -------------------------------------------
 DATASET_CONFIGS = {
+    "arc_challenge":{"path":"ai2_arc","config":"ARC-Challenge","split":"test","question":"question","label":"answerKey"}, # start with this
     "boolq":        {"path":"boolq","split":"validation","question":"question","label":"answer"},
     "arc_easy":     {"path":"ai2_arc","config":"ARC-Easy","split":"test","question":"question","label":"answerKey"},
-    "arc_challenge":{"path":"ai2_arc","config":"ARC-Challenge","split":"test","question":"question","label":"answerKey"},
     "gsm8k":        {"path":"gsm8k","config":"main","split":"test","question":"question","label":"answer"},
     "sciq":         {"path":"sciq","split":"validation","question":"question","label":"correct_answer"},
     "piqa":         {"path":"piqa","split":"test","question":"goal","label":"label"},
@@ -34,7 +34,7 @@ DATASET_CONFIGS = {
 
 BENCHMARKS   = list(DATASET_CONFIGS.keys())
 ROUTER       = "bert"
-THRESHOLDS   = [0.05, 0.20, 0.45, 0.70]
+THRESHOLDS   = [0.1,0.5,0.9]
 
 # optional HF token
 api_key_path = os.environ.get("HF_TOKEN_PATH", "")
@@ -83,12 +83,12 @@ def get_completion(row, client, thr):
     prompt    = f"Question: {row['question']}\nRespond with ONLY 'true' or 'false':"
     messages  = [{"role": "user", "content": prompt}]
     model_id  = f"router-{ROUTER}-{thr}"
-    responses, routed_model = client.chat.completions.create(model=model_id, messages=messages)
+    routed_model = client.chat.completions.create(model=model_id, messages=messages)
 
-    raw  = responses[0].outputs[0].text.strip().lower()
-    m    = re.search(r"\b(true|false)\b", raw)
-    pred = (m.group(0) == "true") if m else None
-    return pred, raw, routed_model
+    # raw  = responses[0].outputs[0].text.strip().lower()
+    # m    = re.search(r"\b(true|false)\b", raw)
+    # pred = (m.group(0) == "true") if m else None
+    return routed_model
 
 
 # ─────────────────────────────────────────────────────────
@@ -100,7 +100,7 @@ def main(task_idx: int):
 
     client = Controller(
         routers=[ROUTER],
-        strong_model="meta-llama/Llama-3.1-8B-Instruct",
+        strong_model="meta-llama/Llama-3.1-70B-Instruct",
         weak_model="meta-llama/Llama-3.2-1B-Instruct",
         api_key=api_key,
         progress_bar=True,

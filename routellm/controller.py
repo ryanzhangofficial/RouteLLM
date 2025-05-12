@@ -156,19 +156,19 @@ class Controller:
         
         print(f"Routed Model: {routed_model}")
 
-        prompt = self._build_prompt(kwargs["messages"])
+        # prompt = self._build_prompt(kwargs["messages"])
 
-        # Create a vLLM instance for the routed model.
-        # Adjust max_model_len, trust_remote_code, and tensor_parallel_size as needed.
-        llm = LLM(routed_model, max_model_len=2048, trust_remote_code=True, tensor_parallel_size=1)
-        sampling_params = SamplingParams(
-            temperature=kwargs.get("temperature", 1.0),
-            top_p=kwargs.get("top_p", 0.9),
-            max_tokens=kwargs.get("max_tokens", 100)
-        )
-        # Generate a completion using vLLM
-        result = llm.generate(prompt, sampling_params)
-        return result, routed_model
+        # # Create a vLLM instance for the routed model.
+        # # Adjust max_model_len, trust_remote_code, and tensor_parallel_size as needed.
+        # llm = LLM(routed_model, max_model_len=2048, trust_remote_code=True, tensor_parallel_size=1)
+        # sampling_params = SamplingParams(
+        #     temperature=kwargs.get("temperature", 1.0),
+        #     top_p=kwargs.get("top_p", 0.9),
+        #     max_tokens=kwargs.get("max_tokens", 100)
+        # )
+        # # Generate a completion using vLLM
+        # result = llm.generate(prompt, sampling_params)
+        return routed_model
 
     # Matches OpenAI's Async Chat Completions interface, but now using vLLM.
     # Since vLLM may not have native async support,

@@ -4,6 +4,7 @@ import gc
 import json
 import logging
 import os
+import re
 
 import datasets
 import pandas as pd
@@ -42,6 +43,8 @@ from zeus.monitor import ZeusMonitor
 from collections import defaultdict
 from typing import List, Optional, Dict, Any
 
+from routellm.controller import Controller
+
 logger = logging.getLogger(__name__)
 logging.basicConfig(
     level=logging.DEBUG,
@@ -54,11 +57,19 @@ logging.basicConfig(
 
 NUM_GPUS = torch.cuda.device_count()
 PROJECT_ROOT_PATH = Path(__file__).parent.resolve()
+ROUTER       = "bert"
 
 os.environ["TOKENIZERS_PARALLELISM"] = "true"
 torch.set_float32_matmul_precision('high')
 
 datasets.config.HF_DATASETS_TRUST_REMOTE_CODE = True
+
+api_key_path = os.environ.get("HF_TOKEN_PATH", "")
+api_key      = Path(api_key_path).read_text().strip() if api_key_path else ""
+
+parent_folder = Path(__file__).parent.resolve()
+results_root = parent_folder / "sweep_results"
+results_root.mkdir(exist_ok=True)
 
 
 class MessPlusAutomaticModelSelector:
@@ -313,112 +324,81 @@ class MessPlusAutomaticModelSelector:
                 entity=self.wandb_entity,
                 config=self.config
             ) as run:
-                self.wandb_run = run
-                self.wandb_run.summary["V"] = self.algorithm_config["V"]
-                self.wandb_run.summary["alpha"] = self.algorithm_config["alpha"]
-                self.wandb_run.summary["c"] = self.algorithm_config["c"]
+                # 1) Set up the RouteLLM client
+                client = Controller(
+                    routers=[ROUTER],
+                    strong_model=self.algorithm_config.get(
+                        "strong_model", "meta-llama/Llama-3.1-70B-Instruct"
+                    ),
+                    weak_model=self.algorithm_config.get(
+                        "weak_model", "meta-llama/Llama-3.2-1B-Instruct"
+                    ),
+                    api_key=api_key,
+                    progress_bar=True,
+                )
 
-                # We initialize one classifier model for every benchmark
-                self.__warmup_classifier_model()
-                model_categories = [i for i in self.vllm_models.keys()]
+                # 2) Load the DataFrame for this benchmark
+                df_base = task
+                monitor = ZeusMonitor(gpu_indices=[0], approx_instant_energy=True)
+                records = []
 
-                try:
-                    benchmark_metric = self.sample_generator.benchmark_metrics_mapping[task.config.task.lower()]
-                except KeyError:
-                    bm_keys = [i for i in self.sample_generator.benchmark_metrics_mapping.keys()]
-                    matching_items = [bm_name for bm_name in bm_keys if bm_name in task.config.task.lower()]
-                    # Take the first matching item
-                    benchmark_metric = self.sample_generator.benchmark_metrics_mapping[matching_items[0]]
+                # 3) Single‐threshold loop over samples
+                thr = self.algorithm_config["threshold"]
+                for idx, row in df_base.iterrows():
+                    monitor.begin_window(f"sample-{idx}")
 
-                for timestamp, (doc_id, request_list) in enumerate(benchmark_documents_by_id.items()):
-                    x_t = self.__get_decision_variable_for_exploration_or_exploitation(
-                        c=self.algorithm_config["c"],
-                        timestamp=timestamp
+                    # Build and send the prompt
+                    prompt = f"Question: {row['question']}\nRespond with ONLY 'true' or 'false':"
+                    messages = [{"role": "user", "content": prompt}]
+                    model_id = f"router-{ROUTER}-{thr}"
+                    responses, routed_model = client.chat.completions.create(
+                        model=model_id, messages=messages
                     )
 
-                    if x_t == 1 or self.classifier_config["generate_training_dataset"]:
-                        logger.info(f"Running request #{timestamp} - Training")
-                        updated_requests, result_scores, training_sample = self.__get_training_sample(
-                            request_list=request_list,
-                            task=task,
-                            doc_id=doc_id,
-                            benchmark_metric=benchmark_metric
-                        )
+                    # Parse the answer
+                    raw = responses[0].outputs[0].text.strip().lower()
+                    m   = re.search(r"\b(true|false)\b", raw)
+                    pred = (m.group(0) == "true") if m else None
 
-                        if self.classifier_config["write_training_dataset_to_disk"]:
-                            num_samples_saved = self.data_writer.process_row(sample=training_sample, benchmark_name=task.task_name)
-                            logger.debug(f"Saved {num_samples_saved} samples to disk.")
+                    # Measure energy & accuracy
+                    meas   = monitor.end_window(f"sample-{idx}")
+                    energy = sum(meas.gpu_energy.values())
+                    correct = (pred == row["label"])
+                    choice_int = 1 if "8B" in routed_model else 0
 
-                        # This assumes an increasing ordering of models by parameter count.
-                        largest_model = model_categories[-1]
-                        instances_to_propagate = updated_requests[largest_model]
-                        result_score = result_scores[largest_model]
-                        chosen_model_id = len(model_categories) - 1
+                    wandb.log({
+                        "sample_energy":       energy,
+                        "sample_accuracy":     int(correct),
+                        "sample_model_choice": choice_int,
+                    }, step=idx, commit=True)
 
-                    else:
-                        logger.info(f"Running request #{timestamp} - Estimating")
-                        selected_doc = request_list[0].doc
-                        sample = self.sample_generator.make_sample(
-                            doc_id=doc_id,
-                            input_data=selected_doc,
-                            task=task,
-                        )
+                    records.append({
+                        "question":    row["question"],
+                        "label":       row["label"],
+                        "predicted":   pred,
+                        "raw":         raw,
+                        "model":       routed_model,
+                        "energy":      energy,
+                        "correct":     correct,
+                        "choice_int":  choice_int,
+                    })
 
-                        preds, probs = self.mess_classifier.predict(texts=[sample["input_text"].item()])
-                        energy = []
-                        for model_category in self.measurements.keys():
-                            energy.append(
-                                sum(
-                                    map(lambda x: sum([
-                                        i for i in x.gpu_energy.values()
-                                    ]) / len(self.measurements[model_category]), self.measurements[model_category])
-                                )
-                            )
+                # 4) Summary logging & CSV dump
+                df = pd.DataFrame(records)
+                acc = df.correct.mean()
+                total_energy = df.energy.sum()
+                avg_choice   = df.choice_int.mean()
 
-                        energy = np.array(energy).reshape(-1, 1)
-                        probs = probs.reshape(-1, 1)
-                        cost_fn = self.algorithm_config["V"] * energy + self.Q * (
-                                self.algorithm_config["alpha"] - probs
-                        )
+                wandb.log({
+                    "accuracy":     acc,
+                    "energy_j":     total_energy,
+                    "model_choice": avg_choice,
+                })
 
-                        cost_fn = cost_fn.reshape(1, -1)
-                        print(f"COST FN: {cost_fn}.")
-                        chosen_model_id = np.argmin(cost_fn)
-                        model_category_chosen = model_categories[chosen_model_id]
-
-                        result = self.query_model(
-                            request_list=request_list,
-                            doc_id=doc_id,
-                            selected_doc=selected_doc,
-                            task=task,
-                            model=self.vllm_models[model_category_chosen],
-                            model_category=model_category_chosen,
-                        )
-
-                        instances_to_propagate = result["updated_requests"]
-                        result_score = result[benchmark_metric]
-
-                    for instance in instances_to_propagate:
-                        instances_by_doc_id[doc_id].append(instance)
-
-                    self.Q = max(0.0, self.Q + self.algorithm_config["alpha"] - result_score)
-                    self.score_list.append(result_score)
-                    self.model_chosen_list.append(chosen_model_id)
-                    self.num_exploration_steps.append(x_t)
-
-                    print(f"Q LENGTH: {self.Q}.")
-
-                    if wandb.run is not None:
-                        wandb.log({
-                            "mess/accuracy": sum(self.score_list) / (timestamp + 1),
-                            "mess/model_chosen_ratio": sum(self.model_chosen_list) / (timestamp + 1),
-                            "mess/exploration_rate": sum(self.num_exploration_steps) / (timestamp + 1),
-                            "mess/q_length": self.Q,
-                        }, step=timestamp)
-
-                if self.classifier_config["generate_training_dataset"] and self.classifier_config["write_training_dataset_to_disk"]:
-                    writer_stats = self.data_writer.finalize()
-                    logger.info(f"Writing training dataset to disk done. Details: {writer_stats}")
+                out_dir = results_root / task_output.task_name
+                out_dir.mkdir(exist_ok=True)
+                df.to_csv(out_dir / f"{task_output.task_name}_{thr:.2f}.csv", index=False)
+                run.finish()
 
         ### Postprocess outputs ###
         task.apply_filters()
