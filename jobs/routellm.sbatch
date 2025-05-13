@@ -8,8 +8,6 @@
 
 cd "$(dirname "$0")"
 
-export PYTHONPATH="/dss/dssfs04/lwp-dss-0002/pn72yi/pn72yi-dss-0000/go76xom2/mess-plus:$PYTHONPATH"
-
 nvidia-smi
 enroot create /dss/dssfs04/lwp-dss-0002/pn72yi/pn72yi-dss-0000/ge56heh2/messplus.sqsh
 
