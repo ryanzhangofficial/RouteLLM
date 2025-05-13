@@ -6,13 +6,10 @@
 #SBATCH -o output_%A_%a.out
 #SBATCH --exclude=lrz-hgx-h100-025
 
-set -euo pipefail
-
-python=/dss/dssfs04/lwp-dss-0002/pn72yi/pn72yi-dss-0000/ge56heh2/mess-plus/venv/bin/python
+cd "$(dirname "$0")"
 
 nvidia-smi
-
-enroot create -f --name routellm /dss/dssfs04/lwp-dss-0002/pn72yi/pn72yi-dss-0000/ge56heh2/messplus.sqsh
+enroot create /dss/dssfs04/lwp-dss-0002/pn72yi/pn72yi-dss-0000/ge56heh2/messplus.sqsh
 
 ths=(0.10 0.50 0.90)
 thr=${ths[$SLURM_ARRAY_TASK_ID]}
@@ -29,7 +26,7 @@ enroot start \
     --mount /sbin \
     --mount /usr/share/ \
     routellm \
-    "$python" /dss/dssfs04/lwp-dss-0002/pn72yi/pn72yi-dss-0000/go76xom2/RouteLLM/routellm_bench.py \
+    /dss/dssfs04/lwp-dss-0002/pn72yi/pn72yi-dss-0000/ge56heh2/mess-plus/venv/bin/python /dss/dssfs04/lwp-dss-0002/pn72yi/pn72yi-dss-0000/go76xom2/RouteLLM/routellm_bench.py \
       --benchmarks arc_challenge \
       --threshold "$thr" \
       --wandb-entity tum-i13 \
