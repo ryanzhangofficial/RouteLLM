@@ -75,94 +75,94 @@ results_root.mkdir(exist_ok=True)
 class MessPlusAutomaticModelSelector:
 
     def __init__(self, config_file_path: str, project_name: str, wandb_entity: str = None):
-        # # self.config = yaml.safe_load(open(config_file_path, "r"))
-        self.lm_eval_config     = {"benchmarks": []}
-        self.algorithm_config   = {"threshold": None}
+        # # # self.config = yaml.safe_load(open(config_file_path, "r"))
+        # self.lm_eval_config     = {"benchmarks": []}
+        # self.algorithm_config   = {"threshold": None}
         self.wandb_project_name = project_name
         self.wandb_entity = wandb_entity
 
-        self.dataset = None
-        self.input_column_name = None
-        self.expected_response_column_name = None
+        # self.dataset = None
+        # self.input_column_name = None
+        # self.expected_response_column_name = None
 
-        self.__warm_up_inference_models()
+        # self.__warm_up_inference_models()
 
-        # Classifier model
-        # self.classifier_config = self.config["classifier_model"]
-        self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        self.label_history = pd.DataFrame()
-        self.class_weights = torch.ones((1, 3))
+        # # Classifier model
+        # # self.classifier_config = self.config["classifier_model"]
+        # self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        # self.label_history = pd.DataFrame()
+        # self.class_weights = torch.ones((1, 3))
 
-        # Loggers
-        # When using Zeus, you must disable RAPL CPU monitoring as this will cause the program to fail.
-        # Change "True" to "False" in file venv/lib/python3.12/site-packages/zeus/device/cpu/rapl.py (l. 137)
-        self.wandb_run = None
+        # # Loggers
+        # # When using Zeus, you must disable RAPL CPU monitoring as this will cause the program to fail.
+        # # Change "True" to "False" in file venv/lib/python3.12/site-packages/zeus/device/cpu/rapl.py (l. 137)
+        # self.wandb_run = None
 
-        # self.measurements = {data["category"]: [] for data in self.config["model_zoo"].values()}
-        # self.nll_scores = {data["category"]: [] for data in self.config["model_zoo"].values()}
-        # self.greedy_output = {data["category"]: [] for data in self.config["model_zoo"].values()}
-        # self.predictions = {data["category"]: [] for data in self.config["model_zoo"].values()}
-        # self.ground_truths = {data["category"]: [] for data in self.config["model_zoo"].values()}
-        # self.labels = {data["category"]: [] for data in self.config["model_zoo"].values()}
+        # # self.measurements = {data["category"]: [] for data in self.config["model_zoo"].values()}
+        # # self.nll_scores = {data["category"]: [] for data in self.config["model_zoo"].values()}
+        # # self.greedy_output = {data["category"]: [] for data in self.config["model_zoo"].values()}
+        # # self.predictions = {data["category"]: [] for data in self.config["model_zoo"].values()}
+        # # self.ground_truths = {data["category"]: [] for data in self.config["model_zoo"].values()}
+        # # self.labels = {data["category"]: [] for data in self.config["model_zoo"].values()}
 
-        self.energy_monitor = ZeusMonitor(gpu_indices=[i for i in range(NUM_GPUS)], approx_instant_energy=True)
-        self.num_exploration_steps = []
-        self.score_list = []
-        self.model_chosen_list = []
-        self.classifier_running_train_loss = 0.0
-        self.classifier_train_steps = 0
-        self.classifier_running_val_loss = 0.0
-        self.classifier_val_steps = 0
-        self.algorithm_correct_choices = 0
+        # self.energy_monitor = ZeusMonitor(gpu_indices=[i for i in range(NUM_GPUS)], approx_instant_energy=True)
+        # self.num_exploration_steps = []
+        # self.score_list = []
+        # self.model_chosen_list = []
+        # self.classifier_running_train_loss = 0.0
+        # self.classifier_train_steps = 0
+        # self.classifier_running_val_loss = 0.0
+        # self.classifier_val_steps = 0
+        # self.algorithm_correct_choices = 0
 
-        # Algorithm config
-        # Q is a virtual queue, i.e., we only keep the sum of all violations, no history.
-        self.Q = 0.0
+        # # Algorithm config
+        # # Q is a virtual queue, i.e., we only keep the sum of all violations, no history.
+        # self.Q = 0.0
 
-        # Classifier Score Estimation Function
-        self.scoring_engine = RoutingScoreEstimator()
+        # # Classifier Score Estimation Function
+        # self.scoring_engine = RoutingScoreEstimator()
 
-        # LM Eval Config
-        task_manager = TaskManager(verbosity="INFO")
+        # # LM Eval Config
+        # task_manager = TaskManager(verbosity="INFO")
 
-        self.limit_num_samples = self.lm_eval_config["limit_num_samples"]
-        self.limits = []
+        # # self.limit_num_samples = self.lm_eval_config["limit_num_samples"]
+        # self.limits = []
 
-        self.task_dict = get_task_dict(
-            self.lm_eval_config["benchmarks"],
-            task_manager
-        )
+        # self.task_dict = get_task_dict(
+        #     self.lm_eval_config["benchmarks"],
+        #     task_manager
+        # )
 
-        self.task_dict = self.__adjust_config(
-            self.task_dict,
-            gen_kwargs=self.lm_eval_config["gen_kwargs"] if "gen_kwargs" in self.config.keys() else None,
-            predict_only=self.lm_eval_config["predict_only"] if "predict_only" in self.lm_eval_config.keys() else False,
-            num_fewshot=self.lm_eval_config["num_fewshot"] if "num_fewshot" in self.lm_eval_config.keys() else 0,
-            # fewshot_random_seed=self.config["seed"]
-        )
+        # self.task_dict = self.__adjust_config(
+        #     self.task_dict,
+        #     gen_kwargs=self.lm_eval_config["gen_kwargs"] if "gen_kwargs" in self.config.keys() else None,
+        #     predict_only=self.lm_eval_config["predict_only"] if "predict_only" in self.lm_eval_config.keys() else False,
+        #     num_fewshot=self.lm_eval_config["num_fewshot"] if "num_fewshot" in self.lm_eval_config.keys() else 0,
+        #     # fewshot_random_seed=self.config["seed"]
+        # )
 
-        print(self.task_dict)
+        # print(self.task_dict)
 
-        # for k, v in self.task_dict.items():
-        #     self.task_dict[k]._config.__dict__.update({"repeats": self.lm_eval_config["num_repeats"]})
+        # # for k, v in self.task_dict.items():
+        # #     self.task_dict[k]._config.__dict__.update({"repeats": self.lm_eval_config["num_repeats"]})
 
-        self.eval_tasks = get_task_list(self.task_dict)
+        # self.eval_tasks = get_task_list(self.task_dict)
 
-        # Config to capture the inference outputs for classifier validation
-        self.data_writer = StreamingDataProcessor(
-            save_path=f"{PROJECT_ROOT_PATH}/data/inference_outputs",
-            file_prefix="inference_data_",
-            save_frequency=100
-        )
+        # # Config to capture the inference outputs for classifier validation
+        # self.data_writer = StreamingDataProcessor(
+        #     save_path=f"{PROJECT_ROOT_PATH}/data/inference_outputs",
+        #     file_prefix="inference_data_",
+        #     save_frequency=100
+        # )
 
-        self.sample_generator = SampleGenerator()
+        # self.sample_generator = SampleGenerator()
 
-        # Warnings and Info messages at the start
-        if self.classifier_config["generate_training_dataset"]:
-            logger.warning(
-                f"You have enabled 'generate_training_dataset'. "
-                f"This will generate a dataset to train the routing classifier and will NOT run the MESS+ algorithm!"
-            )
+        # # Warnings and Info messages at the start
+        # if self.classifier_config["generate_training_dataset"]:
+        #     logger.warning(
+        #         f"You have enabled 'generate_training_dataset'. "
+        #         f"This will generate a dataset to train the routing classifier and will NOT run the MESS+ algorithm!"
+        #     )
 
     def launch(
         self,
