@@ -2,15 +2,22 @@
 #SBATCH -p lrz-hgx-h100-94x4
 #SBATCH --gres=gpu:1
 #SBATCH --time=04:30:00
-#SBATCH -o output_%A.out
+#SBATCH --array=0-2
+#SBATCH -o output_%A_%a.out
 #SBATCH --exclude=lrz-hgx-h100-025
 
 cd "$(dirname "$0")"
 
 nvidia-smi
-enroot create /dss/dssfs04/lwp-dss-0002/pn72yi/pn72yi-dss-0000/ge56heh2/messplus.sqsh
 
-# Train
+# Build the container (force overwrite to avoid stale state)
+enroot create -f --name messplus /dss/dssfs04/lwp-dss-0002/pn72yi/pn72yi-dss-0000/ge56heh2/messplus.sqsh
+
+# Define thresholds to sweep
+ths=(0.10 0.50 0.90)
+thr=${ths[$SLURM_ARRAY_TASK_ID]}
+
+# Start the container and run the benchmark
 enroot start \
     --root \
     -e HF_TOKEN_PATH=/dss/dsshome1/06/go76xom2/.cache/huggingface/token \
@@ -26,6 +33,7 @@ enroot start \
     messplus \
     /dss/dssfs04/lwp-dss-0002/pn72yi/pn72yi-dss-0000/go76xom2/mess-plus/venv/bin/python \
     /dss/dssfs04/lwp-dss-0002/pn72yi/pn72yi-dss-0000/go76xom2/RouteLLM/routellm_bench.py \
-    --config /dss/dssfs04/lwp-dss-0002/pn72yi/pn72yi-dss-0000/go76xom2/mess-plus/config/pretrained/arc_challenge.yaml \
-    --wandb-entity tum-i13 \
-    --project-name routellm-sweepv2
+      --benchmarks arc_challenge \
+      --threshold  "$thr" \
+      --wandb-entity tum-i13 \
+      --project-name routellm-sweepv2

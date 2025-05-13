@@ -736,11 +736,13 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="MESS+ Algorithm Executor with LM-Eval integration")
     parser.add_argument(
-        "-c",
-        "--config",
-        type=str
+        "--benchmarks",
+        nargs="+",
+        type=str,
+        required=True,
+        help="List of HuggingFace dataset names, e.g. arc_challenge"
     )
-
+    
     parser.add_argument(
         "-e",
         "--wandb-entity",
