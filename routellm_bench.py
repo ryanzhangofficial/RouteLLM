@@ -697,6 +697,7 @@ if __name__ == "__main__":
         wandb_entity=args.wandb_entity,
     )
 
+    print("INJECTED BENCHMARKS & THRESHOLDS")
     selector.lm_eval_config["benchmarks"] = args.benchmarks
     selector.algorithm_config["threshold"] = args.threshold
     
