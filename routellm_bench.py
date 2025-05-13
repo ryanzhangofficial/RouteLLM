@@ -30,9 +30,6 @@ from lm_eval.evaluator_utils import (
 from lm_eval.tasks import Task, TaskManager, get_task_dict
 from lm_eval.api.task import Instance
 
-import sys
-sys.path.insert(0, "/dss/dssfs04/lwp-dss-0002/pn72yi/pn72yi-dss-0000/go76xom2/mess-plus")
-
 from utils import is_nested_list
 from utils.data_capturing import StreamingDataProcessor, SampleGenerator
 from utils.mess_lm_eval_harness.vllm_v2 import MessLMEvalVLLM
