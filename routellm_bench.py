@@ -324,60 +324,60 @@ class MessPlusAutomaticModelSelector:
                 entity=self.wandb_entity,
                 config=self.config
             ) as run:
-                # 1) Set up the RouteLLM client
                 client = Controller(
                     routers=[ROUTER],
                     strong_model=self.algorithm_config.get(
                         "strong_model", "meta-llama/Llama-3.1-70B-Instruct"
                     ),
                     weak_model=self.algorithm_config.get(
-                        "weak_model",    "meta-llama/Llama-3.2-1B-Instruct"
+                        "weak_model", "meta-llama/Llama-3.2-1B-Instruct"
                     ),
                     api_key=api_key,
                     progress_bar=True,
                 )
 
-                # 2) Load the DataFrame for this benchmark
-                df_base = task
-
                 monitor = ZeusMonitor(gpu_indices=[0], approx_instant_energy=True)
                 records = []
-
-                # 3) Single-threshold loop, logging only document_id, model_choice, and energy
                 thr = self.algorithm_config["threshold"]
-                for idx, row in df_base.iterrows():
-                    monitor.begin_window(f"sample-{idx}")
 
-                    prompt = f"Question: {row['question']}\nRespond with ONLY 'true' or 'false':"
+                # Loop over each document’s list of Instance objects
+                for timestamp, (doc_id, request_list) in enumerate(benchmark_documents_by_id.items()):
+                    # Grab the text from the first Instance
+                    doc_text = request_list[0].doc
+
+                    # Build the router prompt
+                    prompt = f"Question: {doc_text}\nRespond with ONLY 'true' or 'false':"
                     messages = [{"role": "user", "content": prompt}]
-                    model_id = f"router-{ROUTER}-{thr}"
-                    routed_model = client.chat.completions.create(
-                        model=model_id, messages=messages
-                    )
 
-                    meas = monitor.end_window(f"sample-{idx}")
+                    monitor.begin_window(f"route-{timestamp}")
+                    routed_model = client.chat.completions.create(
+                        model=f"router-{ROUTER}-{thr}",
+                        messages=messages
+                    )
+                    meas = monitor.end_window(f"route-{timestamp}")
                     energy = sum(meas.gpu_energy.values())
+
                     choice_int = 1 if "8B" in routed_model else 0
 
                     wandb.log({
-                        "document_id":  idx,
+                        "document_id":  doc_id,
                         "model_choice": choice_int,
                         "energy":       energy,
-                    }, step=idx, commit=True)
+                    }, step=timestamp, commit=True)
 
                     records.append({
-                        "document_id":  idx,
+                        "document_id":  doc_id,
                         "model_choice": choice_int,
                         "energy":       energy,
                     })
 
-                # 4) Write out CSV of results
                 df = pd.DataFrame(records)
                 out_dir = results_root / task_output.task_name
                 out_dir.mkdir(exist_ok=True)
-                df.to_csv(out_dir / f"{task_output.task_name}_{thr:.2f}.csv", index=False)
+                df.to_csv(out_dir / f"{task_output.task_name}_thr-{thr:.2f}.csv", index=False)
 
                 run.finish()
+
 
 
         ### Postprocess outputs ###
