@@ -6,21 +6,17 @@
 #SBATCH -o output_%A_%a.out
 #SBATCH --exclude=lrz-hgx-h100-025
 
-cd "$(dirname "$0")"
+set -euo pipefail
 
-# Path to the Python interpreter inside your container
 python=/dss/dssfs04/lwp-dss-0002/pn72yi/pn72yi-dss-0000/ge56heh2/mess-plus/venv/bin/python
 
 nvidia-smi
 
-# Build the container (force overwrite to avoid stale state)
-enroot create -f --name messplus /dss/dssfs04/lwp-dss-0002/pn72yi/pn72yi-dss-0000/ge56heh2/messplus.sqsh
+enroot create -f --name routellm /dss/dssfs04/lwp-dss-0002/pn72yi/pn72yi-dss-0000/ge56heh2/messplus.sqsh
 
-# Define thresholds to sweep
 ths=(0.10 0.50 0.90)
 thr=${ths[$SLURM_ARRAY_TASK_ID]}
 
-# Start the container and run the benchmark
 enroot start \
     --root \
     -e HF_TOKEN_PATH=/dss/dsshome1/06/go76xom2/.cache/huggingface/token \
@@ -33,7 +29,7 @@ enroot start \
     --mount /dss/dsshome1/06/go76xom2/ \
     --mount /sbin \
     --mount /usr/share/ \
-    messplus \
+    routellm \
     $python \
     /dss/dssfs04/lwp-dss-0002/pn72yi/pn72yi-dss-0000/go76xom2/RouteLLM/routellm_bench.py \
       --benchmarks arc_challenge \
