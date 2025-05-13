@@ -749,7 +749,7 @@ if __name__ == "__main__":
         required=True,
         help="Router threshold to use for this run"
     )
-    
+
     parser.add_argument(
         "-e",
         "--wandb-entity",
@@ -765,11 +765,14 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     selector = MessPlusAutomaticModelSelector(
-        config_file_path=args.config,
+        config_file_path=None,         
         project_name=args.project_name,
-        wandb_entity=args.wandb_entity
+        wandb_entity=args.wandb_entity,
     )
 
+    selector.lm_eval_config["benchmarks"] = args.benchmarks
+    selector.algorithm_config["threshold"] = args.threshold
+    
     try:
         selector.launch()
     except KeyboardInterrupt or AttributeError:
