@@ -75,9 +75,9 @@ results_root.mkdir(exist_ok=True)
 class MessPlusAutomaticModelSelector:
 
     def __init__(self, config_file_path: str, project_name: str, wandb_entity: str = None):
-        self.config = yaml.safe_load(open(config_file_path, "r"))
-        self.lm_eval_config = self.config["lm_eval"]
-        self.algorithm_config = self.config["algorithm"]
+        # # self.config = yaml.safe_load(open(config_file_path, "r"))
+        # self.lm_eval_config = self.config["lm_eval"]
+        # self.algorithm_config = self.config["algorithm"]
         self.wandb_project_name = project_name
         self.wandb_entity = wandb_entity
 
@@ -88,7 +88,7 @@ class MessPlusAutomaticModelSelector:
         self.__warm_up_inference_models()
 
         # Classifier model
-        self.classifier_config = self.config["classifier_model"]
+        # self.classifier_config = self.config["classifier_model"]
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.label_history = pd.DataFrame()
         self.class_weights = torch.ones((1, 3))
@@ -98,12 +98,12 @@ class MessPlusAutomaticModelSelector:
         # Change "True" to "False" in file venv/lib/python3.12/site-packages/zeus/device/cpu/rapl.py (l. 137)
         self.wandb_run = None
 
-        self.measurements = {data["category"]: [] for data in self.config["model_zoo"].values()}
-        self.nll_scores = {data["category"]: [] for data in self.config["model_zoo"].values()}
-        self.greedy_output = {data["category"]: [] for data in self.config["model_zoo"].values()}
-        self.predictions = {data["category"]: [] for data in self.config["model_zoo"].values()}
-        self.ground_truths = {data["category"]: [] for data in self.config["model_zoo"].values()}
-        self.labels = {data["category"]: [] for data in self.config["model_zoo"].values()}
+        # self.measurements = {data["category"]: [] for data in self.config["model_zoo"].values()}
+        # self.nll_scores = {data["category"]: [] for data in self.config["model_zoo"].values()}
+        # self.greedy_output = {data["category"]: [] for data in self.config["model_zoo"].values()}
+        # self.predictions = {data["category"]: [] for data in self.config["model_zoo"].values()}
+        # self.ground_truths = {data["category"]: [] for data in self.config["model_zoo"].values()}
+        # self.labels = {data["category"]: [] for data in self.config["model_zoo"].values()}
 
         self.energy_monitor = ZeusMonitor(gpu_indices=[i for i in range(NUM_GPUS)], approx_instant_energy=True)
         self.num_exploration_steps = []
@@ -138,7 +138,7 @@ class MessPlusAutomaticModelSelector:
             gen_kwargs=self.lm_eval_config["gen_kwargs"] if "gen_kwargs" in self.config.keys() else None,
             predict_only=self.lm_eval_config["predict_only"] if "predict_only" in self.lm_eval_config.keys() else False,
             num_fewshot=self.lm_eval_config["num_fewshot"] if "num_fewshot" in self.lm_eval_config.keys() else 0,
-            fewshot_random_seed=self.config["seed"]
+            # fewshot_random_seed=self.config["seed"]
         )
 
         print(self.task_dict)
@@ -322,7 +322,7 @@ class MessPlusAutomaticModelSelector:
                 project=self.wandb_project_name,
                 name=self.make_wandb_run_name(task=task),
                 entity=self.wandb_entity,
-                config=self.config
+                # config=self.config
             ) as run:
                 client = Controller(
                     routers=[ROUTER],
