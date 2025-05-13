@@ -76,8 +76,8 @@ class MessPlusAutomaticModelSelector:
 
     def __init__(self, config_file_path: str, project_name: str, wandb_entity: str = None):
         # # self.config = yaml.safe_load(open(config_file_path, "r"))
-        # self.lm_eval_config = self.config["lm_eval"]
-        # self.algorithm_config = self.config["algorithm"]
+        self.lm_eval_config     = {"benchmarks": []}
+        self.algorithm_config   = {"threshold": None}
         self.wandb_project_name = project_name
         self.wandb_entity = wandb_entity
 
