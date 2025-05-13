@@ -325,7 +325,7 @@ class MessPlusAutomaticModelSelector:
             for alpha in alpha_values:
                 with wandb.init(
                     project=self.wandb_project_name,
-                    name=f"bert-{task_output.task_name}-thr-{alpha:.2f}",
+                    name=f"bert-{task_output.task_name}-thr-{alpha}",
                     entity=self.wandb_entity,
                     config=self.config
                 ) as run:
