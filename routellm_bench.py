@@ -96,7 +96,8 @@ class MessPlusAutomaticModelSelector:
         apply_chat_template: bool = False,
         log_samples: bool = False
     ):
-
+        logger.info(f"INJECTED BENCHMARKS: {self.lm_eval_config['benchmarks']}  & THRESHOLD: {self.algorithm_config['threshold']}")
+  
         if apply_chat_template:
             logger.warning(
                 "Chat template formatting change affects loglikelihood and multiple-choice tasks. See docs/chat-template-readme.md for details."
