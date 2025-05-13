@@ -20,6 +20,7 @@ enroot start \
     -e HF_HOME=/dss/dssfs04/lwp-dss-0002/pn72yi/pn72yi-dss-0000/go76xom2/.cache/hf/misc \
     -e HF_DATASETS_CACHE=/dss/dssfs04/lwp-dss-0002/pn72yi/pn72yi-dss-0000/go76xom2/.cache/datasets \
     -e HF_DATASETS_TRUST_REMOTE_CODE=True \
+    -e OPENAI_API_KEY=/dss/dsshome1/06/go76xom2/.cache/openai/token \
     -e VLLM_USE_V1=0 \
     --mount /dss/dssfs04/lwp-dss-0002/pn72yi/pn72yi-dss-0000/ \
     --mount /dss/dsshome1/06/go76xom2/ \
