@@ -4,7 +4,6 @@ import gc
 import json
 import logging
 import os
-import re
 
 import datasets
 import pandas as pd
@@ -57,12 +56,13 @@ logging.basicConfig(
 
 NUM_GPUS = torch.cuda.device_count()
 PROJECT_ROOT_PATH = Path(__file__).parent.resolve()
-ROUTER       = "bert"
+ROUTER = "bert"
 
 os.environ["TOKENIZERS_PARALLELISM"] = "true"
 torch.set_float32_matmul_precision('high')
 
 datasets.config.HF_DATASETS_TRUST_REMOTE_CODE = True
+
 
 api_key_path = os.environ.get("HF_TOKEN_PATH", "")
 api_key      = Path(api_key_path).read_text().strip() if api_key_path else ""
@@ -72,40 +72,104 @@ results_root = parent_folder / "sweep_results"
 results_root.mkdir(exist_ok=True)
 
 
+
 class MessPlusAutomaticModelSelector:
 
-    def __init__(self, config_file_path, project_name, wandb_entity=None):
-        # configs driven from CLI flags
-        self.lm_eval_config   = {"benchmarks": []}
-        self.algorithm_config = {"threshold": None}
-
+    def __init__(self, config_file_path: str, project_name: str, wandb_entity: str = None):
+        self.config = yaml.safe_load(open(config_file_path, "r"))
+        self.lm_eval_config = self.config["lm_eval"]
+        self.algorithm_config = self.config["algorithm"]
         self.wandb_project_name = project_name
-        self.wandb_entity       = wandb_entity
+        self.wandb_entity = wandb_entity
 
-        # Prepare your lm-eval tasks
+        self.dataset = None
+        self.input_column_name = None
+        self.expected_response_column_name = None
+
+        self.__warm_up_inference_models()
+
+        # Classifier model
+        self.classifier_config = self.config["classifier_model"]
+        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        self.label_history = pd.DataFrame()
+        self.class_weights = torch.ones((1, 3))
+
+        # Loggers
+        # When using Zeus, you must disable RAPL CPU monitoring as this will cause the program to fail.
+        # Change "True" to "False" in file venv/lib/python3.12/site-packages/zeus/device/cpu/rapl.py (l. 137)
+        self.wandb_run = None
+
+        self.measurements = {data["category"]: [] for data in self.config["model_zoo"].values()}
+        self.nll_scores = {data["category"]: [] for data in self.config["model_zoo"].values()}
+        self.greedy_output = {data["category"]: [] for data in self.config["model_zoo"].values()}
+        self.predictions = {data["category"]: [] for data in self.config["model_zoo"].values()}
+        self.ground_truths = {data["category"]: [] for data in self.config["model_zoo"].values()}
+        self.labels = {data["category"]: [] for data in self.config["model_zoo"].values()}
+
+        self.energy_monitor = ZeusMonitor(gpu_indices=[i for i in range(NUM_GPUS)], approx_instant_energy=True)
+        self.num_exploration_steps = []
+        self.score_list = []
+        self.model_chosen_list = []
+        self.classifier_running_train_loss = 0.0
+        self.classifier_train_steps = 0
+        self.classifier_running_val_loss = 0.0
+        self.classifier_val_steps = 0
+        self.algorithm_correct_choices = 0
+
+        # Algorithm config
+        # Q is a virtual queue, i.e., we only keep the sum of all violations, no history.
+        self.Q = 0.0
+
+        # Classifier Score Estimation Function
+        self.scoring_engine = RoutingScoreEstimator()
+
+        # LM Eval Config
         task_manager = TaskManager(verbosity="INFO")
-        self.task_dict  = get_task_dict(self.lm_eval_config["benchmarks"], task_manager)
+
+        self.limit_num_samples = self.lm_eval_config["limit_num_samples"]
+        self.limits = []
+
+        self.task_dict = get_task_dict(
+            self.lm_eval_config["benchmarks"],
+            task_manager
+        )
+
+        self.task_dict = self.__adjust_config(
+            self.task_dict,
+            gen_kwargs=self.lm_eval_config["gen_kwargs"] if "gen_kwargs" in self.config.keys() else None,
+            predict_only=self.lm_eval_config["predict_only"] if "predict_only" in self.lm_eval_config.keys() else False,
+            num_fewshot=self.lm_eval_config["num_fewshot"] if "num_fewshot" in self.lm_eval_config.keys() else 0,
+            fewshot_random_seed=self.config["seed"]
+        )
+
+        print(self.task_dict)
+
+        # for k, v in self.task_dict.items():
+        #     self.task_dict[k]._config.__dict__.update({"repeats": self.lm_eval_config["num_repeats"]})
+
         self.eval_tasks = get_task_list(self.task_dict)
 
-        # For backward‐compatibility of the older sweep code:
-        self.limit_num_samples = None
-        self.limits            = []
+        # Config to capture the inference outputs for classifier validation
+        self.data_writer = StreamingDataProcessor(
+            save_path=f"{PROJECT_ROOT_PATH}/data/inference_outputs",
+            file_prefix="inference_data_",
+            save_frequency=100
+        )
+
+        self.sample_generator = SampleGenerator()
+
+        # Warnings and Info messages at the start
+        if self.classifier_config["generate_training_dataset"]:
+            logger.warning(
+                f"You have enabled 'generate_training_dataset'. "
+                f"This will generate a dataset to train the routing classifier and will NOT run the MESS+ algorithm!"
+            )
 
     def launch(
         self,
         apply_chat_template: bool = False,
         log_samples: bool = False
     ):
-        logger.info(f"INJECTED BENCHMARKS: {self.lm_eval_config['benchmarks']}  & THRESHOLD: {self.algorithm_config['threshold']}")
-        task_manager       = TaskManager(verbosity="INFO")
-        self.task_dict     = get_task_dict(self.lm_eval_config["benchmarks"], task_manager)
-        self.eval_tasks    = get_task_list(self.task_dict)
-
-        if not self.eval_tasks:
-            raise RuntimeError(
-                f"No tasks found for benchmarks {self.lm_eval_config['benchmarks']}"
-            )
-
 
         if apply_chat_template:
             logger.warning(
@@ -255,67 +319,68 @@ class MessPlusAutomaticModelSelector:
                 num_requests += 1
 
             logger.info(f"Dataset replication factor: {num_requests / len(unique_doc_ids[reqtype])}")
-            with wandb.init(
-                project=self.wandb_project_name,
-                name=self.make_wandb_run_name(task=task),
-                entity=self.wandb_entity,
-                # config=self.config
-            ) as run:
-                client = Controller(
-                    routers=[ROUTER],
-                    strong_model=self.algorithm_config.get(
-                        "strong_model", "meta-llama/Llama-3.1-70B-Instruct"
-                    ),
-                    weak_model=self.algorithm_config.get(
-                        "weak_model", "meta-llama/Llama-3.2-1B-Instruct"
-                    ),
-                    api_key=api_key,
-                    progress_bar=True,
-                )
 
-                monitor = ZeusMonitor(gpu_indices=[0], approx_instant_energy=True)
-                records = []
-                thr = self.algorithm_config["threshold"]
+            alpha_values = self.algorithm_config["alpha_values"]
 
-                # Loop over each document’s list of Instance objects
-                for timestamp, (doc_id, request_list) in enumerate(benchmark_documents_by_id.items()):
-                    # Grab the text from the first Instance
-                    doc_text = request_list[0].doc
-
-                    # Build the router prompt
-                    prompt = f"Question: {doc_text}\nRespond with ONLY 'true' or 'false':"
-                    messages = [{"role": "user", "content": prompt}]
-
-                    monitor.begin_window(f"route-{timestamp}")
-                    routed_model = client.chat.completions.create(
-                        model=f"router-{ROUTER}-{thr}",
-                        messages=messages
+            for alpha in alpha_values:
+                with wandb.init(
+                    project=self.wandb_project_name,
+                    name=f"bert-{task_output.task_name}-thr-{alpha:.2f}",
+                    entity=self.wandb_entity,
+                    config=self.config
+                ) as run:
+                    client = Controller(
+                        routers=[ROUTER],
+                        strong_model=self.algorithm_config.get(
+                            "strong_model", "meta-llama/Llama-3.1-70B-Instruct"
+                        ),
+                        weak_model=self.algorithm_config.get(
+                            "weak_model", "meta-llama/Llama-3.2-1B-Instruct"
+                        ),
+                        api_key=api_key,
+                        progress_bar=True,
                     )
-                    meas = monitor.end_window(f"route-{timestamp}")
-                    energy = sum(meas.gpu_energy.values())
 
-                    choice_int = 1 if "8B" in routed_model else 0
+                    monitor = ZeusMonitor(gpu_indices=[0], approx_instant_energy=True)
+                    records = []
 
-                    wandb.log({
-                        "document_id":  doc_id,
-                        "model_choice": choice_int,
-                        "energy":       energy,
-                    }, step=timestamp, commit=True)
+                    # Loop over each document’s list of Instance objects
+                    for timestamp, (doc_id, request_list) in enumerate(benchmark_documents_by_id.items()):
+                        # Grab the text from the first Instance
+                        doc_text = request_list[0].doc
 
-                    records.append({
-                        "document_id":  doc_id,
-                        "model_choice": choice_int,
-                        "energy":       energy,
-                    })
+                        # Build the router prompt
+                        prompt = f"Question: {doc_text}\nRespond with ONLY 'true' or 'false':"
+                        messages = [{"role": "user", "content": prompt}]
 
-                df = pd.DataFrame(records)
-                out_dir = results_root / task_output.task_name
-                out_dir.mkdir(exist_ok=True)
-                df.to_csv(out_dir / f"{task_output.task_name}_thr-{thr:.2f}.csv", index=False)
+                        monitor.begin_window(f"route-{timestamp}")
+                        routed_model = client.chat.completions.create(
+                            model=f"router-{ROUTER}-{alpha}",
+                            messages=messages
+                        )
+                        meas = monitor.end_window(f"route-{timestamp}")
+                        energy = sum(meas.gpu_energy.values())
 
-                run.finish()
+                        choice_int = 1 if "8B" in routed_model else 0
 
+                        wandb.log({
+                            "document_id":  doc_id,
+                            "model_choice": choice_int,
+                            "energy":       energy,
+                        }, step=timestamp, commit=True)
 
+                        records.append({
+                            "document_id":  doc_id,
+                            "model_choice": choice_int,
+                            "energy":       energy,
+                        })
+
+                    df = pd.DataFrame(records)
+                    out_dir = results_root / task_output.task_name
+                    out_dir.mkdir(exist_ok=True)
+                    df.to_csv(out_dir / f"{task_output.task_name}_thr-{alpha:.2f}.csv", index=False)
+
+                    run.finish()
 
         ### Postprocess outputs ###
         task.apply_filters()
@@ -430,30 +495,30 @@ class MessPlusAutomaticModelSelector:
         self.vllm_models = {}
         self.tokenizers = {}
 
-        # logger.info(f"Found {len(self.config['model_zoo'].keys())} models in zoo: {self.config['model_zoo'].keys()}")
-        # for model, data in self.config["model_zoo"].items():
+        logger.info(f"Found {len(self.config['model_zoo'].keys())} models in zoo: {self.config['model_zoo'].keys()}")
+        for model, data in self.config["model_zoo"].items():
 
-        #     if data["category"] not in self.vllm_models.keys():
-        #         self.vllm_models[data["category"]] = {}
+            if data["category"] not in self.vllm_models.keys():
+                self.vllm_models[data["category"]] = {}
 
-        #     os.environ["CUDA_VISIBLE_DEVICES"] = str(data["gpu_indices"]).replace("[", "").replace("]", "")
-        #     print(os.environ["CUDA_VISIBLE_DEVICES"])
-        #     self.vllm_models[data["category"]] = {
-        #         "model_name": model,
-        #         "vllm_eval_instance": MessLMEvalVLLM(
-        #             model,
-        #             max_length=data["max_seq_len"],
-        #             gpu_indices=data["gpu_indices"],
-        #             trust_remote_code=True,
-        #             tensor_parallel_size=len(data["gpu_indices"]),
-        #             gpu_memory_utilization=data["gpu_memory_utilization"],
-        #             quantization=data["quantization"],
-        #             seed=self.config["seed"],
-        #             enforce_eager=self.lm_eval_config["enforce_eager"]
-        #         )
-        #     }
+            os.environ["CUDA_VISIBLE_DEVICES"] = str(data["gpu_indices"]).replace("[", "").replace("]", "")
+            print(os.environ["CUDA_VISIBLE_DEVICES"])
+            self.vllm_models[data["category"]] = {
+                "model_name": model,
+                "vllm_eval_instance": MessLMEvalVLLM(
+                    model,
+                    max_length=data["max_seq_len"],
+                    gpu_indices=data["gpu_indices"],
+                    trust_remote_code=True,
+                    tensor_parallel_size=len(data["gpu_indices"]),
+                    gpu_memory_utilization=data["gpu_memory_utilization"],
+                    quantization=data["quantization"],
+                    seed=self.config["seed"],
+                    enforce_eager=self.lm_eval_config["enforce_eager"]
+                )
+            }
 
-        #     logger.info(f"vLLM model {model} loaded on rank {data['gpu_indices']}. Tensor parallel size: {len(data['gpu_indices'])}")
+            logger.info(f"vLLM model {model} loaded on rank {data['gpu_indices']}. Tensor parallel size: {len(data['gpu_indices'])}")
 
         logger.info(f"All models loaded.")
 
@@ -477,7 +542,7 @@ class MessPlusAutomaticModelSelector:
         )
 
         logger.info(
-            # f"Classification model {self.config['classifier_model']['model_id']} loaded and ready to use. "
+            f"Classification model {self.config['classifier_model']['model_id']} loaded and ready to use. "
             f"Classifier model loaded onto device: {self.classifier_device}."
         )
 
@@ -673,18 +738,9 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="MESS+ Algorithm Executor with LM-Eval integration")
     parser.add_argument(
-        "--benchmarks",
-        nargs="+",
-        type=str,
-        required=True,
-        help="List of HuggingFace dataset names, e.g. arc_challenge"
-    )
-    
-    parser.add_argument(
-        "--threshold",
-        type=float,
-        required=True,
-        help="Router threshold to use for this run"
+        "-c",
+        "--config",
+        type=str
     )
 
     parser.add_argument(
@@ -702,15 +758,11 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     selector = MessPlusAutomaticModelSelector(
-        config_file_path=None,         
+        config_file_path=args.config,
         project_name=args.project_name,
-        wandb_entity=args.wandb_entity,
+        wandb_entity=args.wandb_entity
     )
 
-    logger.info(f"INJECTED BENCHMARKS: {args.benchmarks} & THRESHOLDS: {args.threshold}")
-    selector.lm_eval_config["benchmarks"] = args.benchmarks
-    selector.algorithm_config["threshold"] = args.threshold
-    
     try:
         selector.launch()
     except KeyboardInterrupt or AttributeError:
