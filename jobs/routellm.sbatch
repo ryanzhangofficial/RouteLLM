@@ -8,6 +8,9 @@
 
 cd "$(dirname "$0")"
 
+# Path to the Python interpreter inside your container
+python=/dss/dssfs04/lwp-dss-0002/pn72yi/pn72yi-dss-0000/ge56heh2/mess-plus/venv/bin/python
+
 nvidia-smi
 
 # Build the container (force overwrite to avoid stale state)
@@ -31,9 +34,9 @@ enroot start \
     --mount /sbin \
     --mount /usr/share/ \
     messplus \
-    /dss/dssfs04/lwp-dss-0002/pn72yi/pn72yi-dss-0000/go76xom2/mess-plus/venv/bin/python \
+    $python \
     /dss/dssfs04/lwp-dss-0002/pn72yi/pn72yi-dss-0000/go76xom2/RouteLLM/routellm_bench.py \
       --benchmarks arc_challenge \
-      --threshold  "$thr" \
+      --threshold "$thr" \
       --wandb-entity tum-i13 \
       --project-name routellm-sweepv2
