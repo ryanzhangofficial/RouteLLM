@@ -493,30 +493,30 @@ class MessPlusAutomaticModelSelector:
         self.vllm_models = {}
         self.tokenizers = {}
 
-        logger.info(f"Found {len(self.config['model_zoo'].keys())} models in zoo: {self.config['model_zoo'].keys()}")
-        for model, data in self.config["model_zoo"].items():
+        # logger.info(f"Found {len(self.config['model_zoo'].keys())} models in zoo: {self.config['model_zoo'].keys()}")
+        # for model, data in self.config["model_zoo"].items():
 
-            if data["category"] not in self.vllm_models.keys():
-                self.vllm_models[data["category"]] = {}
+        #     if data["category"] not in self.vllm_models.keys():
+        #         self.vllm_models[data["category"]] = {}
 
-            os.environ["CUDA_VISIBLE_DEVICES"] = str(data["gpu_indices"]).replace("[", "").replace("]", "")
-            print(os.environ["CUDA_VISIBLE_DEVICES"])
-            self.vllm_models[data["category"]] = {
-                "model_name": model,
-                "vllm_eval_instance": MessLMEvalVLLM(
-                    model,
-                    max_length=data["max_seq_len"],
-                    gpu_indices=data["gpu_indices"],
-                    trust_remote_code=True,
-                    tensor_parallel_size=len(data["gpu_indices"]),
-                    gpu_memory_utilization=data["gpu_memory_utilization"],
-                    quantization=data["quantization"],
-                    seed=self.config["seed"],
-                    enforce_eager=self.lm_eval_config["enforce_eager"]
-                )
-            }
+        #     os.environ["CUDA_VISIBLE_DEVICES"] = str(data["gpu_indices"]).replace("[", "").replace("]", "")
+        #     print(os.environ["CUDA_VISIBLE_DEVICES"])
+        #     self.vllm_models[data["category"]] = {
+        #         "model_name": model,
+        #         "vllm_eval_instance": MessLMEvalVLLM(
+        #             model,
+        #             max_length=data["max_seq_len"],
+        #             gpu_indices=data["gpu_indices"],
+        #             trust_remote_code=True,
+        #             tensor_parallel_size=len(data["gpu_indices"]),
+        #             gpu_memory_utilization=data["gpu_memory_utilization"],
+        #             quantization=data["quantization"],
+        #             seed=self.config["seed"],
+        #             enforce_eager=self.lm_eval_config["enforce_eager"]
+        #         )
+        #     }
 
-            logger.info(f"vLLM model {model} loaded on rank {data['gpu_indices']}. Tensor parallel size: {len(data['gpu_indices'])}")
+        #     logger.info(f"vLLM model {model} loaded on rank {data['gpu_indices']}. Tensor parallel size: {len(data['gpu_indices'])}")
 
         logger.info(f"All models loaded.")
 
@@ -540,7 +540,7 @@ class MessPlusAutomaticModelSelector:
         )
 
         logger.info(
-            f"Classification model {self.config['classifier_model']['model_id']} loaded and ready to use. "
+            # f"Classification model {self.config['classifier_model']['model_id']} loaded and ready to use. "
             f"Classifier model loaded onto device: {self.classifier_device}."
         )
 
