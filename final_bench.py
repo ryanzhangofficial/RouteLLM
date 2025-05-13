@@ -319,65 +319,68 @@ class MessPlusAutomaticModelSelector:
                 num_requests += 1
 
             logger.info(f"Dataset replication factor: {num_requests / len(unique_doc_ids[reqtype])}")
-            with wandb.init(
-                project=self.wandb_project_name,
-                name=self.make_wandb_run_name(task=task),
-                entity=self.wandb_entity,
-                config=self.config
-            ) as run:
-                client = Controller(
-                    routers=[ROUTER],
-                    strong_model=self.algorithm_config.get(
-                        "strong_model", "meta-llama/Llama-3.1-70B-Instruct"
-                    ),
-                    weak_model=self.algorithm_config.get(
-                        "weak_model", "meta-llama/Llama-3.2-1B-Instruct"
-                    ),
-                    api_key=api_key,
-                    progress_bar=True,
-                )
 
-                monitor = ZeusMonitor(gpu_indices=[0], approx_instant_energy=True)
-                records = []
-                thr = self.algorithm_config["threshold"]
+            alpha_values = self.algorithm_config["alpha_values"]
 
-                # Loop over each document’s list of Instance objects
-                for timestamp, (doc_id, request_list) in enumerate(benchmark_documents_by_id.items()):
-                    # Grab the text from the first Instance
-                    doc_text = request_list[0].doc
-
-                    # Build the router prompt
-                    prompt = f"Question: {doc_text}\nRespond with ONLY 'true' or 'false':"
-                    messages = [{"role": "user", "content": prompt}]
-
-                    monitor.begin_window(f"route-{timestamp}")
-                    routed_model = client.chat.completions.create(
-                        model=f"router-{ROUTER}-{thr}",
-                        messages=messages
+            for alpha in alpha_values:
+                with wandb.init(
+                    project=self.wandb_project_name,
+                    name=f"bert-{task_output.task_name}-thr-{alpha:.2f}",
+                    entity=self.wandb_entity,
+                    config=self.config
+                ) as run:
+                    client = Controller(
+                        routers=[ROUTER],
+                        strong_model=self.algorithm_config.get(
+                            "strong_model", "meta-llama/Llama-3.1-70B-Instruct"
+                        ),
+                        weak_model=self.algorithm_config.get(
+                            "weak_model", "meta-llama/Llama-3.2-1B-Instruct"
+                        ),
+                        api_key=api_key,
+                        progress_bar=True,
                     )
-                    meas = monitor.end_window(f"route-{timestamp}")
-                    energy = sum(meas.gpu_energy.values())
 
-                    choice_int = 1 if "8B" in routed_model else 0
+                    monitor = ZeusMonitor(gpu_indices=[0], approx_instant_energy=True)
+                    records = []
 
-                    wandb.log({
-                        "document_id":  doc_id,
-                        "model_choice": choice_int,
-                        "energy":       energy,
-                    }, step=timestamp, commit=True)
+                    # Loop over each document’s list of Instance objects
+                    for timestamp, (doc_id, request_list) in enumerate(benchmark_documents_by_id.items()):
+                        # Grab the text from the first Instance
+                        doc_text = request_list[0].doc
 
-                    records.append({
-                        "document_id":  doc_id,
-                        "model_choice": choice_int,
-                        "energy":       energy,
-                    })
+                        # Build the router prompt
+                        prompt = f"Question: {doc_text}\nRespond with ONLY 'true' or 'false':"
+                        messages = [{"role": "user", "content": prompt}]
 
-                df = pd.DataFrame(records)
-                out_dir = results_root / task_output.task_name
-                out_dir.mkdir(exist_ok=True)
-                df.to_csv(out_dir / f"{task_output.task_name}_thr-{thr:.2f}.csv", index=False)
+                        monitor.begin_window(f"route-{timestamp}")
+                        routed_model = client.chat.completions.create(
+                            model=f"router-{ROUTER}-{alpha}",
+                            messages=messages
+                        )
+                        meas = monitor.end_window(f"route-{timestamp}")
+                        energy = sum(meas.gpu_energy.values())
 
-                run.finish()
+                        choice_int = 1 if "8B" in routed_model else 0
+
+                        wandb.log({
+                            "document_id":  doc_id,
+                            "model_choice": choice_int,
+                            "energy":       energy,
+                        }, step=timestamp, commit=True)
+
+                        records.append({
+                            "document_id":  doc_id,
+                            "model_choice": choice_int,
+                            "energy":       energy,
+                        })
+
+                    df = pd.DataFrame(records)
+                    out_dir = results_root / task_output.task_name
+                    out_dir.mkdir(exist_ok=True)
+                    df.to_csv(out_dir / f"{task_output.task_name}_thr-{alpha:.2f}.csv", index=False)
+
+                    run.finish()
 
         ### Postprocess outputs ###
         task.apply_filters()
