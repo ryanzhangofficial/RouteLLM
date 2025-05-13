@@ -744,6 +744,13 @@ if __name__ == "__main__":
     )
     
     parser.add_argument(
+        "--threshold",
+        type=float,
+        required=True,
+        help="Router threshold to use for this run"
+    )
+    
+    parser.add_argument(
         "-e",
         "--wandb-entity",
         type=str
