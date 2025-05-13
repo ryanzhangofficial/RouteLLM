@@ -321,6 +321,7 @@ class MessPlusAutomaticModelSelector:
             logger.info(f"Dataset replication factor: {num_requests / len(unique_doc_ids[reqtype])}")
 
             alpha_values = self.algorithm_config["alpha_values"]
+            logger.info(f"ALPHA VALUES!!!: {alpha_values}")
 
             for alpha in alpha_values:
                 with wandb.init(
