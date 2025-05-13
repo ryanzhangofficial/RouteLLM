@@ -26,7 +26,7 @@ enroot start \
     --mount /dss/dsshome1/06/go76xom2/ \
     --mount /sbin \
     --mount /usr/share/ \
-    routellm \
+    messplus \
     /dss/dssfs04/lwp-dss-0002/pn72yi/pn72yi-dss-0000/ge56heh2/mess-plus/venv/bin/python /dss/dssfs04/lwp-dss-0002/pn72yi/pn72yi-dss-0000/go76xom2/RouteLLM/routellm_bench.py \
       --benchmarks arc_challenge \
       --threshold "$thr" \
