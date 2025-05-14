@@ -18,6 +18,8 @@ sbatch sciq.sbatch
 sleep 1
 sbatch siqa.sbatch
 sleep 1
+sbatch social_iqa.sbatch
+sleep 1
 # sbatch triviaqa.sbatch
 sleep 1
 sbatch winogrande.sbatch
