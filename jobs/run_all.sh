@@ -16,7 +16,7 @@ sbatch piqa.sbatch
 sleep 1
 sbatch sciq.sbatch
 sleep 1
-sbatch siqa.sbatch
+sbatch piqa.sbatch
 sleep 1
 sbatch social_iqa.sbatch
 sleep 1
