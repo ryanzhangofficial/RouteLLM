@@ -1,0 +1,2219 @@
+Tue May 13 08:40:52 2025       
++---------------------------------------------------------------------------------------+
+| NVIDIA-SMI 535.230.02             Driver Version: 535.230.02   CUDA Version: 12.2     |
+|-----------------------------------------+----------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |         Memory-Usage | GPU-Util  Compute M. |
+|                                         |                      |               MIG M. |
+|=========================================+======================+======================|
+|   0  NVIDIA H100                    On  | 00000000:06:00.0 Off |                    0 |
+| N/A   34C    P0              68W / 600W |      0MiB / 95830MiB |      0%      Default |
+|                                         |                      |             Disabled |
++-----------------------------------------+----------------------+----------------------+
+                                                                                         
++---------------------------------------------------------------------------------------+
+| Processes:                                                                            |
+|  GPU   GI   CI        PID   Type   Process name                            GPU Memory |
+|        ID   ID                                                             Usage      |
+|=======================================================================================|
+|  No running processes found                                                           |
++---------------------------------------------------------------------------------------+
+[ERROR] File already exists: /raid/enroot/data/user-4360157/messplus
+
+=============
+== PyTorch ==
+=============
+
+NVIDIA Release 25.01 (build 134983853)
+PyTorch Version 2.6.0a0+ecf3bae
+Container image Copyright (c) 2025, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+Copyright (c) 2014-2024 Facebook Inc.
+Copyright (c) 2011-2014 Idiap Research Institute (Ronan Collobert)
+Copyright (c) 2012-2014 Deepmind Technologies    (Koray Kavukcuoglu)
+Copyright (c) 2011-2012 NEC Laboratories America (Koray Kavukcuoglu)
+Copyright (c) 2011-2013 NYU                      (Clement Farabet)
+Copyright (c) 2006-2010 NEC Laboratories America (Ronan Collobert, Leon Bottou, Iain Melvin, Jason Weston)
+Copyright (c) 2006      Idiap Research Institute (Samy Bengio)
+Copyright (c) 2001-2004 Idiap Research Institute (Ronan Collobert, Samy Bengio, Johnny Mariethoz)
+Copyright (c) 2015      Google Inc.
+Copyright (c) 2015      Yangqing Jia
+Copyright (c) 2013-2016 The Caffe contributors
+All rights reserved.
+
+Various files include modifications (c) NVIDIA CORPORATION & AFFILIATES.  All rights reserved.
+
+This container image and its contents are governed by the NVIDIA Deep Learning Container License.
+By pulling and using the container, you accept the terms and conditions of this license:
+https://developer.nvidia.com/ngc/nvidia-deep-learning-container-license
+
+ERROR: This container was built for NVIDIA Driver Release 570.86 or later, but
+       version 535.230.02 was detected and compatibility mode is UNAVAILABLE.
+
+       [[]]
+
+NOTE: Mellanox network driver detected, but NVIDIA peer memory driver not
+      detected.  Multi-node communication performance may be reduced.
+
+INFO 05-13 08:41:07 [__init__.py:239] Automatically detected platform cuda.
+2025-05-13:08:41:09,678 INFO     [routellm_bench.py:499] Found 3 models in zoo: dict_keys(['meta-llama/Llama-3.2-1B-Instruct', 'unsloth/Meta-Llama-3.1-8B-Instruct-bnb-4bit', 'unsloth/Llama-3.3-70B-Instruct-bnb-4bit'])
+0
+INFO 05-13 08:41:22 [config.py:689] This model supports multiple tasks: {'score', 'classify', 'generate', 'embed', 'reward'}. Defaulting to 'generate'.
+WARNING 05-13 08:41:22 [cuda.py:96] To see benefits of async output processing, enable CUDA graph. Since, enforce-eager is enabled, async output processor cannot be used
+INFO 05-13 08:41:22 [llm_engine.py:243] Initializing a V0 LLM engine (v0.8.4) with config: model='meta-llama/Llama-3.2-1B-Instruct', speculative_config=None, tokenizer='meta-llama/Llama-3.2-1B-Instruct', skip_tokenizer_init=False, tokenizer_mode=auto, revision=None, override_neuron_config=None, tokenizer_revision=None, trust_remote_code=True, dtype=torch.bfloat16, max_seq_len=2048, download_dir=None, load_format=LoadFormat.AUTO, tensor_parallel_size=1, pipeline_parallel_size=1, disable_custom_all_reduce=False, quantization=None, enforce_eager=True, kv_cache_dtype=auto,  device_config=cuda, decoding_config=DecodingConfig(guided_decoding_backend='xgrammar', reasoning_backend=None), observability_config=ObservabilityConfig(show_hidden_metrics=False, otlp_traces_endpoint=None, collect_model_forward_time=False, collect_model_execute_time=False), seed=43, served_model_name=meta-llama/Llama-3.2-1B-Instruct, num_scheduler_steps=1, multi_step_stream_outputs=True, enable_prefix_caching=None, chunked_prefill_enabled=False, use_async_output_proc=False, disable_mm_preprocessor_cache=False, mm_processor_kwargs=None, pooler_config=None, compilation_config={"splitting_ops":[],"compile_sizes":[],"cudagraph_capture_sizes":[],"max_capture_size":0}, use_cached_outputs=False, 
+INFO 05-13 08:41:26 [cuda.py:292] Using Flash Attention backend.
+INFO 05-13 08:41:28 [parallel_state.py:959] rank 0 in world size 1 is assigned as DP rank 0, PP rank 0, TP rank 0
+INFO 05-13 08:41:28 [model_runner.py:1110] Starting to load model meta-llama/Llama-3.2-1B-Instruct...
+INFO 05-13 08:41:28 [weight_utils.py:265] Using model weights format ['*.safetensors']
+INFO 05-13 08:41:28 [weight_utils.py:315] No model.safetensors.index.json found in remote.
+Loading safetensors checkpoint shards:   0% Completed | 0/1 [00:00<?, ?it/s]
+Loading safetensors checkpoint shards: 100% Completed | 1/1 [00:02<00:00,  2.12s/it]
+Loading safetensors checkpoint shards: 100% Completed | 1/1 [00:02<00:00,  2.12s/it]
+
+INFO 05-13 08:41:31 [loader.py:458] Loading weights took 2.30 seconds
+INFO 05-13 08:41:31 [model_runner.py:1146] Model loading took 2.3185 GiB and 2.952349 seconds
+INFO 05-13 08:41:32 [worker.py:267] Memory profiling takes 0.60 seconds
+INFO 05-13 08:41:32 [worker.py:267] the current vLLM instance can use total_gpu_memory (93.02GiB) x gpu_memory_utilization (0.12) = 11.16GiB
+INFO 05-13 08:41:32 [worker.py:267] model weights take 2.32GiB; non_torch_memory takes 0.16GiB; PyTorch activation peak memory takes 1.20GiB; the rest of the memory reserved for KV Cache is 7.48GiB.
+INFO 05-13 08:41:32 [executor_base.py:112] # cuda blocks: 15327, # CPU blocks: 8192
+INFO 05-13 08:41:32 [executor_base.py:117] Maximum concurrency for 2048 tokens per request: 119.74x
+INFO 05-13 08:41:35 [llm_engine.py:449] init engine (profile, create kv cache, warmup model) took 4.02 seconds
+2025-05-13:08:41:36,157 INFO     [routellm_bench.py:522] vLLM model meta-llama/Llama-3.2-1B-Instruct loaded on rank [0]. Tensor parallel size: 1
+0
+INFO 05-13 08:41:36 [config.py:689] This model supports multiple tasks: {'score', 'classify', 'generate', 'embed', 'reward'}. Defaulting to 'generate'.
+WARNING 05-13 08:41:37 [config.py:768] bitsandbytes quantization is not fully optimized yet. The speed can be slower than non-quantized models.
+WARNING 05-13 08:41:37 [cuda.py:96] To see benefits of async output processing, enable CUDA graph. Since, enforce-eager is enabled, async output processor cannot be used
+INFO 05-13 08:41:37 [llm_engine.py:243] Initializing a V0 LLM engine (v0.8.4) with config: model='unsloth/Meta-Llama-3.1-8B-Instruct-bnb-4bit', speculative_config=None, tokenizer='unsloth/Meta-Llama-3.1-8B-Instruct-bnb-4bit', skip_tokenizer_init=False, tokenizer_mode=auto, revision=None, override_neuron_config=None, tokenizer_revision=None, trust_remote_code=True, dtype=torch.bfloat16, max_seq_len=2048, download_dir=None, load_format=LoadFormat.BITSANDBYTES, tensor_parallel_size=1, pipeline_parallel_size=1, disable_custom_all_reduce=False, quantization=bitsandbytes, enforce_eager=True, kv_cache_dtype=auto,  device_config=cuda, decoding_config=DecodingConfig(guided_decoding_backend='xgrammar', reasoning_backend=None), observability_config=ObservabilityConfig(show_hidden_metrics=False, otlp_traces_endpoint=None, collect_model_forward_time=False, collect_model_execute_time=False), seed=43, served_model_name=unsloth/Meta-Llama-3.1-8B-Instruct-bnb-4bit, num_scheduler_steps=1, multi_step_stream_outputs=True, enable_prefix_caching=None, chunked_prefill_enabled=False, use_async_output_proc=False, disable_mm_preprocessor_cache=False, mm_processor_kwargs=None, pooler_config=None, compilation_config={"splitting_ops":[],"compile_sizes":[],"cudagraph_capture_sizes":[],"max_capture_size":0}, use_cached_outputs=False, 
+INFO 05-13 08:41:38 [cuda.py:292] Using Flash Attention backend.
+INFO 05-13 08:41:38 [model_runner.py:1110] Starting to load model unsloth/Meta-Llama-3.1-8B-Instruct-bnb-4bit...
+INFO 05-13 08:41:38 [loader.py:1166] Loading weights with BitsAndBytes quantization. May take a while ...
+INFO 05-13 08:41:38 [weight_utils.py:265] Using model weights format ['*.safetensors']
+INFO 05-13 08:41:39 [weight_utils.py:315] No model.safetensors.index.json found in remote.
+Loading safetensors checkpoint shards:   0% Completed | 0/1 [00:00<?, ?it/s]
+Loading safetensors checkpoint shards: 100% Completed | 1/1 [00:04<00:00,  4.64s/it]
+Loading safetensors checkpoint shards: 100% Completed | 1/1 [00:04<00:00,  4.64s/it]
+
+Loading safetensors checkpoint shards:   0% Completed | 0/1 [00:00<?, ?it/s]
+Loading safetensors checkpoint shards: 100% Completed | 1/1 [00:04<00:00,  4.76s/it]
+Loading safetensors checkpoint shards: 100% Completed | 1/1 [00:04<00:00,  4.76s/it]
+
+INFO 05-13 08:41:48 [model_runner.py:1146] Model loading took 5.3424 GiB and 10.140126 seconds
+INFO 05-13 08:41:49 [worker.py:267] Memory profiling takes 0.44 seconds
+INFO 05-13 08:41:49 [worker.py:267] the current vLLM instance can use total_gpu_memory (93.02GiB) x gpu_memory_utilization (0.15) = 13.95GiB
+INFO 05-13 08:41:49 [worker.py:267] model weights take 5.34GiB; non_torch_memory takes 0.00GiB; PyTorch activation peak memory takes 1.18GiB; the rest of the memory reserved for KV Cache is 7.43GiB.
+INFO 05-13 08:41:50 [executor_base.py:112] # cuda blocks: 3804, # CPU blocks: 2048
+INFO 05-13 08:41:50 [executor_base.py:117] Maximum concurrency for 2048 tokens per request: 29.72x
+INFO 05-13 08:41:52 [llm_engine.py:449] init engine (profile, create kv cache, warmup model) took 3.90 seconds
+2025-05-13:08:41:53,726 INFO     [routellm_bench.py:522] vLLM model unsloth/Meta-Llama-3.1-8B-Instruct-bnb-4bit loaded on rank [0]. Tensor parallel size: 1
+0
+INFO 05-13 08:41:54 [config.py:689] This model supports multiple tasks: {'score', 'classify', 'generate', 'embed', 'reward'}. Defaulting to 'generate'.
+WARNING 05-13 08:41:54 [config.py:768] bitsandbytes quantization is not fully optimized yet. The speed can be slower than non-quantized models.
+WARNING 05-13 08:41:54 [cuda.py:96] To see benefits of async output processing, enable CUDA graph. Since, enforce-eager is enabled, async output processor cannot be used
+INFO 05-13 08:41:54 [llm_engine.py:243] Initializing a V0 LLM engine (v0.8.4) with config: model='unsloth/Llama-3.3-70B-Instruct-bnb-4bit', speculative_config=None, tokenizer='unsloth/Llama-3.3-70B-Instruct-bnb-4bit', skip_tokenizer_init=False, tokenizer_mode=auto, revision=None, override_neuron_config=None, tokenizer_revision=None, trust_remote_code=True, dtype=torch.bfloat16, max_seq_len=2048, download_dir=None, load_format=LoadFormat.BITSANDBYTES, tensor_parallel_size=1, pipeline_parallel_size=1, disable_custom_all_reduce=False, quantization=bitsandbytes, enforce_eager=True, kv_cache_dtype=auto,  device_config=cuda, decoding_config=DecodingConfig(guided_decoding_backend='xgrammar', reasoning_backend=None), observability_config=ObservabilityConfig(show_hidden_metrics=False, otlp_traces_endpoint=None, collect_model_forward_time=False, collect_model_execute_time=False), seed=43, served_model_name=unsloth/Llama-3.3-70B-Instruct-bnb-4bit, num_scheduler_steps=1, multi_step_stream_outputs=True, enable_prefix_caching=None, chunked_prefill_enabled=False, use_async_output_proc=False, disable_mm_preprocessor_cache=False, mm_processor_kwargs=None, pooler_config=None, compilation_config={"splitting_ops":[],"compile_sizes":[],"cudagraph_capture_sizes":[],"max_capture_size":0}, use_cached_outputs=False, 
+INFO 05-13 08:41:55 [model_runner.py:1110] Starting to load model unsloth/Llama-3.3-70B-Instruct-bnb-4bit...
+INFO 05-13 08:41:56 [loader.py:1166] Loading weights with BitsAndBytes quantization. May take a while ...
+INFO 05-13 08:41:56 [weight_utils.py:265] Using model weights format ['*.safetensors']
+Loading safetensors checkpoint shards:   0% Completed | 0/8 [00:00<?, ?it/s]
+Loading safetensors checkpoint shards:  12% Completed | 1/8 [00:03<00:25,  3.60s/it]
+Loading safetensors checkpoint shards:  25% Completed | 2/8 [00:06<00:20,  3.42s/it]
+Loading safetensors checkpoint shards:  38% Completed | 3/8 [00:09<00:15,  3.18s/it]
+Loading safetensors checkpoint shards:  50% Completed | 4/8 [00:12<00:12,  3.11s/it]
+Loading safetensors checkpoint shards:  62% Completed | 5/8 [00:15<00:09,  3.09s/it]
+Loading safetensors checkpoint shards:  75% Completed | 6/8 [00:18<00:06,  3.08s/it]
+Loading safetensors checkpoint shards:  88% Completed | 7/8 [00:21<00:03,  3.06s/it]
+Loading safetensors checkpoint shards: 100% Completed | 8/8 [00:25<00:00,  3.25s/it]
+Loading safetensors checkpoint shards: 100% Completed | 8/8 [00:25<00:00,  3.20s/it]
+
+Loading safetensors checkpoint shards:   0% Completed | 0/8 [00:00<?, ?it/s]
+Loading safetensors checkpoint shards:  12% Completed | 1/8 [00:03<00:21,  3.11s/it]
+Loading safetensors checkpoint shards:  25% Completed | 2/8 [00:06<00:18,  3.10s/it]
+Loading safetensors checkpoint shards:  38% Completed | 3/8 [00:09<00:15,  3.02s/it]
+Loading safetensors checkpoint shards:  50% Completed | 4/8 [00:12<00:12,  3.01s/it]
+Loading safetensors checkpoint shards:  62% Completed | 5/8 [00:15<00:09,  3.05s/it]
+Loading safetensors checkpoint shards:  75% Completed | 6/8 [00:18<00:06,  3.06s/it]
+Loading safetensors checkpoint shards:  88% Completed | 7/8 [00:21<00:03,  3.06s/it]
+Loading safetensors checkpoint shards: 100% Completed | 8/8 [00:25<00:00,  3.25s/it]
+Loading safetensors checkpoint shards: 100% Completed | 8/8 [00:25<00:00,  3.13s/it]
+
+INFO 05-13 08:42:47 [model_runner.py:1146] Model loading took 36.8059 GiB and 51.558894 seconds
+INFO 05-13 08:42:49 [worker.py:267] Memory profiling takes 1.05 seconds
+INFO 05-13 08:42:49 [worker.py:267] the current vLLM instance can use total_gpu_memory (93.02GiB) x gpu_memory_utilization (0.68) = 63.25GiB
+INFO 05-13 08:42:49 [worker.py:267] model weights take 36.81GiB; non_torch_memory takes 0.00GiB; PyTorch activation peak memory takes 1.19GiB; the rest of the memory reserved for KV Cache is 25.25GiB.
+INFO 05-13 08:42:49 [executor_base.py:112] # cuda blocks: 5171, # CPU blocks: 819
+INFO 05-13 08:42:49 [executor_base.py:117] Maximum concurrency for 2048 tokens per request: 40.40x
+INFO 05-13 08:42:53 [llm_engine.py:449] init engine (profile, create kv cache, warmup model) took 5.99 seconds
+2025-05-13:08:42:54,907 INFO     [routellm_bench.py:522] vLLM model unsloth/Llama-3.3-70B-Instruct-bnb-4bit loaded on rank [0]. Tensor parallel size: 1
+2025-05-13:08:42:54,908 INFO     [routellm_bench.py:524] All models loaded.
+[2025-05-13 08:42:54,912] [zeus.device.gpu.nvidia](nvidia.py:47) pynvml is available and initialized.
+[2025-05-13 08:42:54,912] [zeus.device.cpu.rapl](rapl.py:136) RAPL is available.
+[2025-05-13 08:42:54,912] [zeus.monitor.energy](energy.py:208) Monitoring GPU indices [0].
+[2025-05-13 08:42:54,912] [zeus.monitor.energy](energy.py:209) Monitoring CPU indices []
+2025-05-13:08:43:03,971 WARNING  [routellm_bench.py:650] Overwriting default num_fewshot of logiqa from None to 0
+2025-05-13:08:43:03,976 INFO     [task.py:420] Building contexts for logiqa on rank 0...
+{'logiqa': ConfigurableTask(task_name=logiqa,output_type=multiple_choice,num_fewshot=0,num_samples=651)}
+TaskOutput(task_name=logiqa, group_name=None, version=1.0, n_shot=0, task_alias=None, group_alias=None)
+  0%|          | 0/651 [00:00<?, ?it/s] 40%|███▉      | 259/651 [00:00<00:00, 2582.88it/s] 83%|████████▎ | 539/651 [00:00<00:00, 2705.05it/s]100%|██████████| 651/651 [00:00<00:00, 2704.04it/s]
+2025-05-13:08:43:04,243 INFO     [routellm_bench.py:306] Processing loglikelihood requests for logiqa dataset with a total of 2604 samples.
+2025-05-13:08:43:04,244 INFO     [routellm_bench.py:321] Dataset replication factor: 4.0
+2025-05-13:08:43:04,244 INFO     [routellm_bench.py:324] ALPHA VALUES!!!: [0.1, 0.5, 0.9]
+wandb: Using wandb-core as the SDK backend.  Please refer to https://wandb.me/wandb-core for more information.
+wandb: Currently logged in as: ryanzhangofficial (tum-i13). Use `wandb login --relogin` to force relogin
+wandb: Tracking run with wandb version 0.19.1
+wandb: Run data is saved locally in /workspace/wandb/run-20250513_084304-058absaj
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run bert-logiqa-thr-0.1
+wandb: ⭐️ View project at https://wandb.ai/tum-i13/routellm-sweepv2
+wandb: 🚀 View run at https://wandb.ai/tum-i13/routellm-sweepv2/runs/058absaj
+  0%|          | 0/1 [00:00<?, ?it/s]Loading bert:   0%|          | 0/1 [00:00<?, ?it/s]Loading bert:   0%|          | 0/1 [00:01<?, ?it/s]
+[2025-05-13 08:43:06,747] [zeus.monitor.energy](energy.py:208) Monitoring GPU indices [0].
+[2025-05-13 08:43:06,747] [zeus.monitor.energy](energy.py:209) Monitoring CPU indices []
+[2025-05-13 08:43:06,748] [zeus.utils.framework](framework.py:25) PyTorch with CUDA support is available.
+wandb:                                                                                
+wandb: 
+wandb: Run history:
+wandb:  document_id ▁▁▁▁▁▁▂▂▂▂▂▃▃▃▃▃▃▃▄▄▅▅▅▅▅▅▅▆▆▆▇▇▇▇▇█████
+wandb:       energy ▁▁▁▁▁▁▁▁█▁▁▁▁▁█▁▁▁▁█▁█▁▁▁▁▁██▁▁▁▁▁█▁█▁▁█
+wandb: model_choice ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb: 
+wandb: Run summary:
+wandb:  document_id 650
+wandb:       energy 23.828
+wandb: model_choice 1
+wandb: 
+wandb: 🚀 View run bert-logiqa-thr-0.1 at: https://wandb.ai/tum-i13/routellm-sweepv2/runs/058absaj
+wandb: ⭐️ View project at: https://wandb.ai/tum-i13/routellm-sweepv2
+wandb: Synced 5 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20250513_084304-058absaj/logs
+wandb: Tracking run with wandb version 0.19.1
+wandb: Run data is saved locally in /workspace/wandb/run-20250513_084434-4brtqjjo
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run bert-logiqa-thr-0.5
+wandb: ⭐️ View project at https://wandb.ai/tum-i13/routellm-sweepv2
+wandb: 🚀 View run at https://wandb.ai/tum-i13/routellm-sweepv2/runs/4brtqjjo
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+  0%|          | 0/1 [00:00<?, ?it/s]Loading bert:   0%|          | 0/1 [00:00<?, ?it/s]Loading bert:   0%|          | 0/1 [00:01<?, ?it/s]
+[2025-05-13 08:44:36,339] [zeus.monitor.energy](energy.py:208) Monitoring GPU indices [0].
+[2025-05-13 08:44:36,339] [zeus.monitor.energy](energy.py:209) Monitoring CPU indices []
+wandb:                                                                                
+wandb: 
+wandb: Run history:
+wandb:  document_id ▁▁▁▁▁▂▂▂▂▂▃▃▃▃▃▃▃▃▄▄▄▄▄▄▅▅▅▅▆▆▆▆▇▇▇█████
+wandb:       energy ▁███▁▁█▁▁▁▁▁▁▁▁██▁▁███▁█▁▁▁█▁█▁▁▁█████▁█
+wandb: model_choice ██████████████████████████████▁██████▁██
+wandb: 
+wandb: Run summary:
+wandb:  document_id 650
+wandb:       energy 11.921
+wandb: model_choice 1
+wandb: 
+wandb: 🚀 View run bert-logiqa-thr-0.5 at: https://wandb.ai/tum-i13/routellm-sweepv2/runs/4brtqjjo
+wandb: ⭐️ View project at: https://wandb.ai/tum-i13/routellm-sweepv2
+wandb: Synced 5 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20250513_084434-4brtqjjo/logs
+wandb: Tracking run with wandb version 0.19.1
+wandb: Run data is saved locally in /workspace/wandb/run-20250513_084613-8u1er7l7
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run bert-logiqa-thr-0.9
+wandb: ⭐️ View project at https://wandb.ai/tum-i13/routellm-sweepv2
+wandb: 🚀 View run at https://wandb.ai/tum-i13/routellm-sweepv2/runs/8u1er7l7
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+Routed Model: meta-llama/Llama-3.1-70B-Instruct
+  0%|          | 0/1 [00:00<?, ?it/s]Loading bert:   0%|          | 0/1 [00:00<?, ?it/s]Loading bert:   0%|          | 0/1 [00:01<?, ?it/s]
+[2025-05-13 08:46:15,881] [zeus.monitor.energy](energy.py:208) Monitoring GPU indices [0].
+[2025-05-13 08:46:15,881] [zeus.monitor.energy](energy.py:209) Monitoring CPU indices []
+wandb:                                                                                
+wandb: 
+wandb: Run history:
+wandb:  document_id ▁▁▁▁▁▁▂▂▂▂▂▃▃▃▃▃▃▃▃▄▅▅▅▅▅▅▆▆▆▆▆▆▇▇▇▇▇▇██
+wandb:       energy ██▁█▁▁▁▁█▁███▁▁█▁▁█▁████▁██▁▁▁▁▁██▁█▁▁▁█
+wandb: model_choice ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb: 
+wandb: Run summary:
+wandb:  document_id 650
+wandb:       energy 11.752
+wandb: model_choice 0
+wandb: 
+wandb: 🚀 View run bert-logiqa-thr-0.9 at: https://wandb.ai/tum-i13/routellm-sweepv2/runs/8u1er7l7
+wandb: ⭐️ View project at: https://wandb.ai/tum-i13/routellm-sweepv2
+wandb: Synced 5 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20250513_084613-8u1er7l7/logs
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Routed Model: meta-llama/Llama-3.2-1B-Instruct
+Traceback (most recent call last):
+  File "/dss/dssfs04/lwp-dss-0002/pn72yi/pn72yi-dss-0000/go76xom2/RouteLLM/routellm_bench.py", line 768, in <module>
+    selector.launch()
+  File "/dss/dssfs04/lwp-dss-0002/pn72yi/pn72yi-dss-0000/go76xom2/RouteLLM/routellm_bench.py", line 191, in launch
+    self.run_benchmark(task_output, limit_arg)
+  File "/dss/dssfs04/lwp-dss-0002/pn72yi/pn72yi-dss-0000/go76xom2/RouteLLM/routellm_bench.py", line 387, in run_benchmark
+    task.apply_filters()
+  File "/dss/dssfs04/lwp-dss-0002/pn72yi/pn72yi-dss-0000/ge56heh2/mess-plus/venv/lib/python3.12/site-packages/lm_eval/api/task.py", line 1174, in apply_filters
+    f.apply(self._instances)
+  File "/dss/dssfs04/lwp-dss-0002/pn72yi/pn72yi-dss-0000/ge56heh2/mess-plus/venv/lib/python3.12/site-packages/lm_eval/api/filter.py", line 55, in apply
+    for inst, resp in zip(instances, resps):
+  File "/dss/dssfs04/lwp-dss-0002/pn72yi/pn72yi-dss-0000/ge56heh2/mess-plus/venv/lib/python3.12/site-packages/lm_eval/filters/selection.py", line 23, in <lambda>
+    return map(lambda r: r[0], resps)
+                         ~^^^
+IndexError: list index out of range
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/dss/dssfs04/lwp-dss-0002/pn72yi/pn72yi-dss-0000/go76xom2/RouteLLM/routellm_bench.py", line 768, in <module>
+[rank0]:     selector.launch()
+[rank0]:   File "/dss/dssfs04/lwp-dss-0002/pn72yi/pn72yi-dss-0000/go76xom2/RouteLLM/routellm_bench.py", line 191, in launch
+[rank0]:     self.run_benchmark(task_output, limit_arg)
+[rank0]:   File "/dss/dssfs04/lwp-dss-0002/pn72yi/pn72yi-dss-0000/go76xom2/RouteLLM/routellm_bench.py", line 387, in run_benchmark
+[rank0]:     task.apply_filters()
+[rank0]:   File "/dss/dssfs04/lwp-dss-0002/pn72yi/pn72yi-dss-0000/ge56heh2/mess-plus/venv/lib/python3.12/site-packages/lm_eval/api/task.py", line 1174, in apply_filters
+[rank0]:     f.apply(self._instances)
+[rank0]:   File "/dss/dssfs04/lwp-dss-0002/pn72yi/pn72yi-dss-0000/ge56heh2/mess-plus/venv/lib/python3.12/site-packages/lm_eval/api/filter.py", line 55, in apply
+[rank0]:     for inst, resp in zip(instances, resps):
+[rank0]:   File "/dss/dssfs04/lwp-dss-0002/pn72yi/pn72yi-dss-0000/ge56heh2/mess-plus/venv/lib/python3.12/site-packages/lm_eval/filters/selection.py", line 23, in <lambda>
+[rank0]:     return map(lambda r: r[0], resps)
+[rank0]:                          ~^^^
+[rank0]: IndexError: list index out of range
+[rank0]:[W513 08:47:55.369651707 ProcessGroupNCCL.cpp:1496] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
