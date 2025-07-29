@@ -87,6 +87,10 @@ class MessPlusAutomaticModelSelector:
         self.expected_response_column_name = None
 
         # self.__warm_up_inference_models()
+        self.vllm_models = {
+            data["category"]: {"model_name": model, "vllm_eval_instance": None}
+            for model, data in self.config["model_zoo"].items()
+        }
 
         # Classifier model
         self.classifier_config = self.config["classifier_model"]
