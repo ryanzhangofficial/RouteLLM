@@ -766,5 +766,12 @@ if __name__ == "__main__":
 
     try:
         selector.launch()
-    except KeyboardInterrupt or AttributeError:
-        selector.shutdown()
+    except Exception as e:
+        logger.error(f"An error occurred during execution: {e}")
+        raise
+    finally:
+        # Ensure cleanup always happens, regardless of how the program exits
+        try:
+            selector.shutdown()
+        except Exception as cleanup_error:
+            logger.warning(f"Error during cleanup: {cleanup_error}")
