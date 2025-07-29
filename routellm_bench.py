@@ -366,7 +366,7 @@ class MessPlusAutomaticModelSelector:
                         meas = monitor.end_window(f"route-{timestamp}")
                         energy = sum(meas.gpu_energy.values())
 
-                        choice_int = 1 if "70B" in routed_model else 0
+                        choice_int = 1 if "32B" in routed_model else 0
 
                         wandb.log({
                             "document_id":  doc_id,
