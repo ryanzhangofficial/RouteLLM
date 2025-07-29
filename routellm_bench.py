@@ -333,10 +333,10 @@ class MessPlusAutomaticModelSelector:
                     client = Controller(
                         routers=[ROUTER],
                         strong_model=self.algorithm_config.get(
-                            "strong_model", "meta-llama/Llama-3.1-70B-Instruct"
+                            "strong_model", "Qwen/Qwen2.5-32B-Instruct"
                         ),
                         weak_model=self.algorithm_config.get(
-                            "weak_model", "meta-llama/Llama-3.2-1B-Instruct"
+                            "weak_model", "Qwen/Qwen2-0.5B-Instruct"
                         ),
                         api_key=api_key,
                         progress_bar=True,
