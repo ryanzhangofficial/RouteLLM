@@ -86,7 +86,7 @@ class MessPlusAutomaticModelSelector:
         self.input_column_name = None
         self.expected_response_column_name = None
 
-        self.__warm_up_inference_models()
+        # self.__warm_up_inference_models()
 
         # Classifier model
         self.classifier_config = self.config["classifier_model"]
