@@ -4,6 +4,7 @@ import gc
 import json
 import logging
 import os
+import glob
 
 import datasets
 import pandas as pd
@@ -168,6 +169,14 @@ class MessPlusAutomaticModelSelector:
                 f"You have enabled 'generate_training_dataset'. "
                 f"This will generate a dataset to train the routing classifier and will NOT run the MESS+ algorithm!"
             )
+            
+        # Check if we should use precomputed outputs
+        self.use_precomputed_outputs = self.lm_eval_config.get("use_precomputed_outputs", False)
+        self.precomputed_outputs_path = self.lm_eval_config.get("precomputed_outputs_path", f"{PROJECT_ROOT_PATH}/data/qwen2_narrow_cost_spread")
+        
+        if self.use_precomputed_outputs:
+            logger.info(f"Using precomputed inference outputs from: {self.precomputed_outputs_path}")
+            self.precomputed_data = self._load_precomputed_data()
 
     def launch(
         self,
@@ -358,15 +367,32 @@ class MessPlusAutomaticModelSelector:
                         prompt = f"Question: {doc_text}\nRespond with ONLY 'true' or 'false':"
                         messages = [{"role": "user", "content": prompt}]
 
-                        monitor.begin_window(f"route-{timestamp}")
-                        routed_model = client.chat.completions.create(
-                            model=f"router-{ROUTER}-{alpha}",
-                            messages=messages
-                        )
-                        meas = monitor.end_window(f"route-{timestamp}")
-                        energy = sum(meas.gpu_energy.values())
-
-                        choice_int = 1 if "32B" in routed_model else 0
+                        # Use precomputed outputs if available, otherwise use live routing
+                        if self.use_precomputed_outputs:
+                            choice_int, energy = self._get_precomputed_routing_decision(
+                                doc_id, alpha, task_output.task_name, doc_text
+                            )
+                            # If no precomputed data found, fallback to live routing
+                            if choice_int is None:
+                                logger.warning(f"Falling back to live routing for doc_id: {doc_id}")
+                                monitor.begin_window(f"route-{timestamp}")
+                                routed_model = client.chat.completions.create(
+                                    model=f"router-{ROUTER}-{alpha}",
+                                    messages=messages
+                                )
+                                meas = monitor.end_window(f"route-{timestamp}")
+                                energy = sum(meas.gpu_energy.values())
+                                choice_int = 1 if "32B" in routed_model else 0
+                        else:
+                            # Original live routing
+                            monitor.begin_window(f"route-{timestamp}")
+                            routed_model = client.chat.completions.create(
+                                model=f"router-{ROUTER}-{alpha}",
+                                messages=messages
+                            )
+                            meas = monitor.end_window(f"route-{timestamp}")
+                            energy = sum(meas.gpu_energy.values())
+                            choice_int = 1 if "32B" in routed_model else 0
 
                         wandb.log({
                             "document_id":  doc_id,
@@ -734,6 +760,125 @@ class MessPlusAutomaticModelSelector:
         name += f"classif-pretrained={self.classifier_config['use_pretrained_classifier']}"
 
         return name
+
+    def _load_precomputed_data(self):
+        """Load precomputed inference outputs from saved JSON files."""
+        precomputed_data = {}
+        
+        # Check if precomputed outputs path exists
+        if not os.path.exists(self.precomputed_outputs_path):
+            logger.warning(f"Precomputed outputs path does not exist: {self.precomputed_outputs_path}")
+            return precomputed_data
+        
+        # Load data for each benchmark
+        for benchmark in self.lm_eval_config["benchmarks"]:
+            benchmark_path = os.path.join(self.precomputed_outputs_path, benchmark)
+            if os.path.exists(benchmark_path):
+                # Find JSON files in the benchmark directory
+                json_files = glob.glob(os.path.join(benchmark_path, "*.json"))
+                # Filter out backup files
+                json_files = [f for f in json_files if not f.endswith('.backup')]
+                
+                if json_files:
+                    # Load all JSON files for this benchmark
+                    all_data = []
+                    for json_file in json_files:
+                        try:
+                            with open(json_file, 'r') as f:
+                                data = json.load(f)
+                                all_data.extend(data)
+                                logger.info(f"Loaded {len(data)} samples from {json_file}")
+                        except Exception as e:
+                            logger.warning(f"Error loading {json_file}: {e}")
+                    
+                    if all_data:
+                        # Convert to DataFrame for easier processing
+                        df_data = []
+                        for item in all_data:
+                            row = {
+                                'doc_id': item['doc_id'],
+                                'question': item['question'],
+                                'input_text': item['question']  # For compatibility
+                            }
+                            # Add score columns for different model sizes
+                            for model_size, score in item['scores'].items():
+                                row[f'acc_{model_size}'] = score
+                                row[f'label_{model_size}'] = score
+                                # Default energy values (since not provided in JSON)
+                                row[f'energy_consumption_{model_size}'] = 1.0 if model_size in ['large'] else 0.5
+                        
+                            df_data.append(row)
+                        
+                        combined_df = pd.DataFrame(df_data)
+                        precomputed_data[benchmark] = combined_df
+                        logger.info(f"Loaded {len(combined_df)} total samples for {benchmark}")
+                else:
+                    logger.warning(f"No JSON files found in {benchmark_path}")
+            else:
+                logger.warning(f"Benchmark path does not exist: {benchmark_path}")
+        
+        return precomputed_data
+
+    def _get_precomputed_routing_decision(self, doc_id, alpha, benchmark_name, doc_text):
+        """Get routing decision from precomputed inference outputs."""
+        if not self.use_precomputed_outputs or benchmark_name not in self.precomputed_data:
+            logger.warning(f"No precomputed data available for benchmark: {benchmark_name}")
+            return None, 0.0  # model_choice, energy
+        
+        df = self.precomputed_data[benchmark_name]
+        
+        # Try to find the document by doc_id first
+        matching_rows = df[df['doc_id'] == doc_id]
+        
+        # If not found by doc_id, try to match by input_text
+        if matching_rows.empty:
+            # Extract question from doc_text for matching
+            if isinstance(doc_text, dict):
+                if 'question' in doc_text:
+                    query_text = doc_text['question']
+                elif 'passage' in doc_text and 'question' in doc_text:
+                    query_text = f"{doc_text['passage']} {doc_text['question']}"
+                else:
+                    query_text = str(doc_text)
+            else:
+                query_text = str(doc_text)
+            
+            # Try to find by input_text (partial match)
+            matching_rows = df[df['input_text'].str.contains(query_text[:100], na=False, regex=False)]
+        
+        if matching_rows.empty:
+            logger.warning(f"No precomputed data found for doc_id: {doc_id} in benchmark: {benchmark_name}")
+            return None, 0.0
+        
+        # Use the first matching row
+        row = matching_rows.iloc[0]
+        
+        # Apply routing logic based on alpha threshold
+        # Route to strong model if weak model performance is below alpha threshold
+        # Available categories from JSON: xsmall, small, medium, large
+        
+        # Use small model as weak, large model as strong
+        if 'acc_small' in row:
+            weak_model_performance = row['acc_small']
+        if 'acc_large' in row:
+            strong_model_performance = row['acc_large']
+        
+        # Default routing decision: use strong model if weak performance < alpha
+        if weak_model_performance is not None:
+            model_choice = 1 if weak_model_performance < alpha else 0
+        else:
+            # Fallback: route based on any available performance metric or alpha threshold
+            model_choice = 1 if alpha > 0.5 else 0
+        
+        # Get energy consumption (using defaults since not in JSON)
+        energy = 0.0
+        if model_choice == 1:  # Strong model (large)
+            energy = row.get('energy_consumption_large', 1.0)
+        else:  # Weak model (small)
+            energy = row.get('energy_consumption_small', 0.5)
+        
+        logger.debug(f"Doc {doc_id}: alpha={alpha}, weak_perf={weak_model_performance}, choice={model_choice}, energy={energy}")
+        return model_choice, energy
 
     def shutdown(self):
         self.__evict_vllm_models()

@@ -27,4 +27,4 @@ enroot start \
     /dss/dssfs04/lwp-dss-0002/pn72yi/pn72yi-dss-0000/ge56heh2/mess-plus/venv/bin/python /dss/dssfs04/lwp-dss-0002/pn72yi/pn72yi-dss-0000/go76xom2/RouteLLM/routellm_bench.py \
     --config /dss/dssfs04/lwp-dss-0002/pn72yi/pn72yi-dss-0000/go76xom2/RouteLLM/config/pretrained/logiqa.yaml \
     --wandb-entity tum-i13 \
-    --project-name routellm-sweep-qwen
+    --project-name routellm-sweep-narrow

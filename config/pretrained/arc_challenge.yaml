@@ -57,6 +57,8 @@ algorithm:
 lm_eval:
   # The run name will be the first benchmark in the list below.
   benchmarks: ["arc_challenge"]
+  use_precomputed_outputs: true
+  precomputed_outputs_path: "data/qwen2_narrow_cost_spread"
   num_repeats: 1
   limit_num_samples: null
   # TODO: Make sure we disable eager mode for the actual experiments to be as energy efficient as possible.

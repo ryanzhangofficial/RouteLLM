@@ -31,4 +31,4 @@ enroot start \
       --benchmarks arc_challenge \
       --threshold "$thr" \
       --wandb-entity tum-i13 \
-      --project-name routellm-sweep-qwen
+      --project-name routellm-sweep-narrow
