@@ -111,7 +111,7 @@ def main(task_idx: int):
 
     for thr in THRESHOLDS:
         run = wandb.init(
-            project="routellm-sweep",
+            project="routellm-sweep-qwen",
             entity="tum-i13",
             name=f"{ROUTER}-{task_name}-thr-{thr:.2f}",
             config={"benchmark": task_name, "router": ROUTER, "threshold": thr},
